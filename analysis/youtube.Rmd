@@ -1,0 +1,45 @@
+---
+title: "youtube"
+author: "StephanLewandowsky"
+date: "2019-12-31"
+output: 
+   workflowr::wflow_html:
+     code_folding: hide
+     number_sections: yes
+     toc: yes
+     toc_depth: 3
+     toc_float: yes
+     theme: cosmo
+     highlight: textmate
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+rm(list=ls())
+library(lattice)
+library(tidyverse)
+library(lme4)
+library(RColorBrewer)
+library(gridExtra)
+library(stringr)
+library(Hmisc)
+library(reshape2)
+library(psych)
+library(scales)
+library(summarytools) #contains descr()
+library(foreign) #for SPSS
+library(workflowr)
+
+#define working directories
+inputdir <- "data"
+
+iphob <- read.spss(paste(inputdir,"IslamophobiaSPSSDATA.sav",sep="/"), use.value.labels = TRUE, to.data.frame = TRUE)
+```
+
+## Summary statistics
+```{r summary, echo=FALSE}
+descr(iphob)
+```
