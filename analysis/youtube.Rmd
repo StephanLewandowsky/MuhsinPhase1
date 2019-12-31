@@ -17,7 +17,7 @@ editor_options:
 
 ## Introduction
 
-```{r echo=FALSE, warning=FALSE, message=FALSE, results="hide"}
+```{r echo=TRUE, warning=FALSE, message=FALSE, results="hide"}
 rm(list=ls())
 library(lattice)
 library(tidyverse)
@@ -40,6 +40,9 @@ iphob <- read.spss(paste(inputdir,"IslamophobiaSPSSDATA.sav",sep="/"), use.value
 ```
 
 ## Summary statistics
-```{r summary, echo=FALSE}
+```{r summary, echo=TRUE, warning=FALSE, message=FALSE, results="hide"}
 descr(iphob)
+
+
+
 ```

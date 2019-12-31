@@ -8,11 +8,16 @@ editor_options:
   chunk_output_type: console
 ---
 
-Analyses of Muhsin's YouTube radicalization project (January 2020 onward)
+Analyses of Muhsin's YouTube radicalization project (January 2020 onward).
+
+Click [here](youtube.html) for analysis 
+
 
 ```{r workflowr steps, echo=FALSE,warning=FALSE, message=FALSE, results="hide"}
+#wflow_use_github(username = "myname", repository = "myproject") <-- one time setup, followed by wflow_publish(republish = TRUE)
+
 #wflow_build() --alternative to knit button (but it cleans environment, hence preferable)
-#wflow_publish(c("analysis/index.Rmd", "analysis/youtube.Rmd")
+#wflow_publish(c("analysis/index.Rmd", "analysis/youtube.Rmd"))
 #wflow_git_push(username="StephanLewandowsky")
 #to add new analysis file: 
 
