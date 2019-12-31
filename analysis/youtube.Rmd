@@ -40,7 +40,7 @@ iphob <- read.spss(paste(inputdir,"IslamophobiaSPSSDATA.sav",sep="/"), use.value
 ```
 
 ## Summary statistics
-```{r summary, echo=TRUE, warning=FALSE, message=FALSE, results="hide"}
+```{r summary, echo=TRUE, warning=FALSE, message=FALSE}
 descr(iphob)
 
 
