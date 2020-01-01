@@ -458,7 +458,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-12-31
+<strong>Last updated:</strong> 2020-01-01
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -594,10 +594,10 @@ environment
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree286072b7ca084de80a1e41878073c51e05fa18c0targetblank286072ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/286072b7ca084de80a1e41878073c51e05fa18c0" target="_blank">286072b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree0137833d763c170c626f9ed7839ee700adae632ftargetblank0137833a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/0137833d763c170c626f9ed7839ee700adae632f" target="_blank">0137833</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree286072b7ca084de80a1e41878073c51e05fa18c0targetblank286072ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree0137833d763c170c626f9ed7839ee700adae632ftargetblank0137833a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -606,6 +606,7 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    docs/figure/
 
 Untracked files:
     Untracked:  data/IslamophobiaSPSSDATA.sav
@@ -648,6 +649,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/0137833d763c170c626f9ed7839ee700adae632f/analysis/youtube.Rmd" target="_blank">0137833</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+wflow_publish(c(“analysis/index.Rmd”, “analysis/youtube.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/StephanLewandowsky/MuhsinPhase1/ae6e0f822deaae756a4ff7205e3d57ca44bd44af/docs/youtube.html" target="_blank">ae6e0f8</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2019-12-31
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -744,7 +779,10 @@ wflow_publish(c(“analysis/index.Rmd”, “analysis/youtube.Rmd”))
 <h2><span class="header-section-number">0.1</span> Introduction</h2>
 <pre class="r"><code>rm(list=ls())
 library(lattice)
+library(ggplot2)
+library(tabplot)
 library(tidyverse)
+
 library(lme4)
 library(RColorBrewer)
 library(gridExtra)
@@ -756,14 +794,17 @@ library(scales)
 library(summarytools) #contains descr()
 library(foreign) #for SPSS
 library(workflowr)
+library(olsrr)
+library(corrplot)
 
 #define working directories
 inputdir &lt;- &quot;data&quot;
 
-iphob &lt;- read.spss(paste(inputdir,&quot;IslamophobiaSPSSDATA.sav&quot;,sep=&quot;/&quot;), use.value.labels = TRUE, to.data.frame = TRUE)</code></pre>
+iphob &lt;- read.spss(paste(inputdir,&quot;IslamophobiaSPSSDATA.sav&quot;,sep=&quot;/&quot;), use.value.labels = TRUE, to.data.frame = TRUE)
+irad &lt;-  read.spss(paste(inputdir,&quot;RadicalisationSPSS.sav&quot;,sep=&quot;/&quot;), use.value.labels = TRUE, to.data.frame = TRUE)</code></pre>
 </div>
-<div id="summary-statistics" class="section level2">
-<h2><span class="header-section-number">0.2</span> Summary statistics</h2>
+<div id="summary-statistics-for-islamophobia" class="section level2">
+<h2><span class="header-section-number">0.2</span> Summary statistics for Islamophobia</h2>
 <pre class="r"><code>descr(iphob)</code></pre>
 <pre><code>Descriptive Statistics  
 iphob  
@@ -896,6 +937,176 @@ Table: Table continues below
          Kurtosis    -2.04    -1.31      23.65          0.53         7.25    43.12
           N.Valid    50.00    50.00      50.00         50.00        50.00    50.00
         Pct.Valid   100.00   100.00     100.00        100.00       100.00   100.00</code></pre>
+<pre class="r"><code>tableplot(iphob)</code></pre>
+<p><img src="figure/youtube.Rmd/summary-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>temp1 &lt;- iphob %&gt;% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
+                            Views,VideoLength,LikestoDislikes,LikesPerView,DislikesPerView,
+                            AdConsequentiam, AdHomien, AdPopulum, FalseCause, HastyGeneralisations,
+                            Polarisation, InvokingEmotion, Conspiracy, Trolling, DeflectingBlame,
+                            MisrepresentationScripture, CherryPickedData)) 
+#zero likes is a clear outlier after log transform, so remove it
+temp1$LikesPerView[temp1$LikesPerView==0]&lt;-NA
+temp1$LikestoDislikes[temp1$LikestoDislikes==0]&lt;-NA
+temp1$sumallrhetoric &lt;- temp1 %&gt;% select(AdConsequentiam:CherryPickedData) %&gt;% apply(.,1,sum)
+
+iphomainvars &lt;- data.frame(temp1,
+                           temp1 %&gt;% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
+                                              VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %&gt;% 
+                                     mutate_all(~ log(. + .0001)) %&gt;%
+                                     rename_all( ~paste0(., &quot;_log&quot;) ))
+multi.hist(iphomainvars%&gt;%select(contains(&quot;log&quot;)))</code></pre>
+<p><img src="figure/youtube.Rmd/summary-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#corrplot...
+RM  &lt;- cor(iphomainvars%&gt;%select(contains(&quot;log&quot;)))
+RM2 &lt;- cor.mtest(iphomainvars%&gt;%select(contains(&quot;log&quot;)), conf.level = .95)
+diag(RM)&lt;-NA
+
+x11(width=11,height=10)
+#colnames(RM) &lt;- rownames(RM) &lt;- c(&quot;Conservatism&quot;,&quot;Truth Knowable&quot;,&quot;Intuitive&quot;,&quot;Conspiracism&quot;,&quot;Need for Chaos&quot;,&quot;Knowledge Source&quot;,
+#&quot;Consensus AIDS&quot;,&quot;Consensus Vaccinations&quot;,&quot;Consensus Climate&quot;)
+corrplot.mixed(RM, lower.col = &quot;black&quot;, number.cex = 1.2,insig = &quot;blank&quot;,
+                   upper=&quot;ellipse&quot;,p.mat = RM2$p,sig.level=.05,
+                   tl.pos=&quot;lt&quot;,tl.col=&quot;black&quot;,na.label = &quot;.&quot;,bg=&quot;lightgray&quot;,
+                   tl.cex=1.5,tl.srt=60)</code></pre>
+<p><img src="figure/youtube.Rmd/summary-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#dev.print(pdf,paste(figdir,&quot;cormat.pdf&quot;,sep=&quot;/&quot;))</code></pre>
+<div id="predict-views-for-islamophobia" class="section level3">
+<h3><span class="header-section-number">0.2.1</span> Predict views for Islamophobia</h3>
+<pre class="r"><code>depvars &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-Views_log)),collapse=&quot; + &quot;)
+
+allregFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;,depvars))
+viewmod &lt;- lm(allregFormula, data=iphomainvars)
+allregs &lt;- ols_step_all_possible(viewmod)
+plot(allregs)</code></pre>
+<p><img src="figure/youtube.Rmd/regphobviews-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regphobviews-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>topmodels &lt;- allregs[order(allregs$n,-allregs$rsquare) , ]
+topmodels[!duplicated(topmodels$n),]</code></pre>
+<pre><code># A tibble: 7 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 LikesPerView_log          0.109          0.0897         0.492
+2     8     2 VideoLength_log Lik~      0.137          0.0992         1.06 
+3    29     3 MisinformationPerMi~      0.149          0.0926         2.42 
+4    64     4 MisinformationPerMi~      0.161          0.0849         3.81 
+5    99     5 MisinformationPerMi~      0.177          0.0810         5.02 
+6   120     6 MisinformationPerMi~      0.191          0.0759         6.27 
+7   127     7 MisinformationPerMi~      0.197          0.0595         8.   </code></pre>
+<pre class="r"><code>#summarize the &#39;best&#39; model (3 predictors, model 29)
+depvars2 &lt;- paste(unlist(str_split(allregs[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+bmFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;, depvars2))
+viewbestmod &lt;- lm(bmFormula, data=iphomainvars)
+summary(viewbestmod)</code></pre>
+<pre><code>
+Call:
+lm(formula = bmFormula, data = iphomainvars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.6968 -0.9012  0.0879  1.5416  3.1461 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        8.8539     1.3685   6.470 5.22e-08 ***
+LikesPerView_log  -0.8355     0.3490  -2.394   0.0207 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.052 on 47 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.1087,    Adjusted R-squared:  0.08971 
+F-statistic:  5.73 on 1 and 47 DF,  p-value: 0.02072</code></pre>
+</div>
+<div id="predict-centrality-for-islamophobia" class="section level3">
+<h3><span class="header-section-number">0.2.2</span> Predict centrality for Islamophobia</h3>
+<pre class="r"><code>depvars3 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-BetweennessCentrality_log)),collapse=&quot; + &quot;)
+
+allregFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;,depvars3))
+centmod &lt;- lm(allregFormula2, data=iphomainvars)
+allregs2 &lt;- ols_step_all_possible(centmod)
+plot(allregs2)</code></pre>
+<p><img src="figure/youtube.Rmd/regphobcent-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regphobcent-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>topmodels2 &lt;- allregs2[order(allregs2$n,-allregs2$rsquare) , ]
+topmodels2[!duplicated(topmodels2$n),]</code></pre>
+<pre><code># A tibble: 7 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 LikestoDislikes_log      0.0415         0.0211         -0.410
+2     8     2 LikesPerView_log su~     0.0804         0.0404         -0.219
+3    29     3 LikesPerView_log Di~     0.0893         0.0286          1.37 
+4    64     4 LikestoDislikes_log~     0.106          0.0248          2.59 
+5    99     5 Views_log LikestoDi~     0.114          0.0115          4.20 
+6   120     6 MisinformationPerMi~     0.119         -0.00721         6.00 
+7   127     7 MisinformationPerMi~     0.119         -0.0318          8    </code></pre>
+<pre class="r"><code>#summarize the &#39;best&#39; model
+depvars4 &lt;- paste(unlist(str_split(allregs2[29,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+bmFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;, depvars4))
+centbestmod &lt;- lm(bmFormula2, data=iphomainvars)
+summary(centbestmod)</code></pre>
+<pre><code>
+Call:
+lm(formula = bmFormula2, data = iphomainvars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.7064 -0.5817 -0.0646  0.5947  1.4282 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          11.1736     0.8790  12.712   &lt;2e-16 ***
+LikesPerView_log     -0.2289     0.1389  -1.649    0.106    
+DislikesPerView_log   0.0714     0.1079   0.662    0.511    
+sumallrhetoric_log    0.2254     0.1687   1.336    0.188    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.802 on 45 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.08927,   Adjusted R-squared:  0.02855 
+F-statistic:  1.47 on 3 and 45 DF,  p-value: 0.2353</code></pre>
+</div>
+<div id="predict-likes-to-dislikes-for-islamophobia" class="section level3">
+<h3><span class="header-section-number">0.2.3</span> Predict likes to dislikes for Islamophobia</h3>
+<pre class="r"><code>depvars5 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=&quot; + &quot;)
+
+allregFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;,depvars5))
+l2dmod &lt;- lm(allregFormula3, data=iphomainvars)
+allregs3 &lt;- ols_step_all_possible(l2dmod)
+plot(allregs3)</code></pre>
+<p><img src="figure/youtube.Rmd/regphobl2d-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regphobl2d-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>topmodels3 &lt;- allregs3[order(allregs3$n,-allregs3$rsquare) , ]
+topmodels3[!duplicated(topmodels3$n),]</code></pre>
+<pre><code># A tibble: 5 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 BetweennessCentrali~     0.0415         0.0211         -1.26 
+2     6     2 BetweennessCentrali~     0.0477         0.00630         0.455
+3    16     3 BetweennessCentrali~     0.0549        -0.00807         2.13 
+4    26     4 MisinformationPerMi~     0.0554        -0.0305          4.11 
+5    31     5 MisinformationPerMi~     0.0577        -0.0519          6    </code></pre>
+<pre class="r"><code>#summarize the &#39;best&#39; model
+depvars6 &lt;- paste(unlist(str_split(allregs3[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+bmFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;, depvars6))
+l2dbestmod &lt;- lm(bmFormula3, data=iphomainvars)
+summary(l2dbestmod)</code></pre>
+<pre><code>
+Call:
+lm(formula = bmFormula3, data = iphomainvars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.2428 -0.8706 -0.2918  0.6590  4.3265 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                 6.3322     2.8754   2.202   0.0326 *
+BetweennessCentrality_log  -0.3430     0.2404  -1.427   0.1603  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.355 on 47 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.04151,   Adjusted R-squared:  0.02112 
+F-statistic: 2.036 on 1 and 47 DF,  p-value: 0.1603</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -921,41 +1132,54 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] workflowr_1.4.0    foreign_0.8-71     summarytools_0.9.3
- [4] scales_1.0.0       psych_1.8.12       reshape2_1.4.3    
- [7] Hmisc_4.1-1        Formula_1.2-3      survival_2.43-3   
-[10] gridExtra_2.3      RColorBrewer_1.1-2 lme4_1.1-19       
-[13] Matrix_1.2-15      forcats_0.4.0      stringr_1.3.1     
-[16] dplyr_0.8.3        purrr_0.3.2        readr_1.3.1       
-[19] tidyr_0.8.2        tibble_2.0.1       ggplot2_3.2.0     
-[22] tidyverse_1.2.1    lattice_0.20-38   
+ [1] corrplot_0.84      olsrr_0.5.2        workflowr_1.4.0   
+ [4] foreign_0.8-71     summarytools_0.9.3 scales_1.0.0      
+ [7] psych_1.8.12       reshape2_1.4.3     Hmisc_4.1-1       
+[10] Formula_1.2-3      survival_2.43-3    gridExtra_2.3     
+[13] RColorBrewer_1.1-2 lme4_1.1-19        Matrix_1.2-15     
+[16] forcats_0.4.0      stringr_1.3.1      dplyr_0.8.3       
+[19] purrr_0.3.2        readr_1.3.1        tidyr_1.0.0       
+[22] tibble_2.1.3       tidyverse_1.2.1    tabplot_1.3-3     
+[25] ffbase_0.12.7      ff_2.2-14          bit_1.1-14        
+[28] ggplot2_3.2.0      lattice_0.20-38   
 
 loaded via a namespace (and not attached):
- [1] nlme_3.1-137        bitops_1.0-6        matrixStats_0.54.0 
- [4] fs_1.3.1            lubridate_1.7.4     httr_1.4.1         
- [7] rprojroot_1.3-2     tools_3.5.2         backports_1.1.3    
-[10] R6_2.3.0            rpart_4.1-13        lazyeval_0.2.1     
-[13] colorspace_1.4-0    nnet_7.3-12         withr_2.1.2        
-[16] tidyselect_0.2.5    mnormt_1.5-5        compiler_3.5.2     
-[19] git2r_0.24.0        cli_1.1.0           rvest_0.3.2        
-[22] htmlTable_1.13.1    xml2_1.2.0          checkmate_1.9.1    
-[25] digest_0.6.18       minqa_1.2.4         rmarkdown_1.11     
-[28] base64enc_0.1-3     pkgconfig_2.0.2     htmltools_0.3.6    
-[31] highr_0.7           htmlwidgets_1.3     rlang_0.4.0        
-[34] readxl_1.3.1        rstudioapi_0.9.0    pryr_0.1.4         
-[37] generics_0.0.2      jsonlite_1.6        acepack_1.4.1      
-[40] RCurl_1.95-4.11     magrittr_1.5        rapportools_1.0    
-[43] Rcpp_1.0.1          munsell_0.5.0       stringi_1.2.4      
-[46] whisker_0.3-2       yaml_2.2.0          MASS_7.3-51.1      
-[49] plyr_1.8.4          grid_3.5.2          parallel_3.5.2     
-[52] crayon_1.3.4        haven_2.1.1         splines_3.5.2      
-[55] pander_0.6.3        hms_0.4.2           magick_2.0         
-[58] knitr_1.21          pillar_1.3.1        tcltk_3.5.2        
-[61] codetools_0.2-15    glue_1.3.0          evaluate_0.12      
-[64] latticeExtra_0.6-28 data.table_1.12.0   modelr_0.1.4       
-[67] nloptr_1.2.1        cellranger_1.1.0    gtable_0.2.0       
-[70] assertthat_0.2.0    xfun_0.4            broom_0.5.2        
-[73] cluster_2.0.7-1    </code></pre>
+  [1] minqa_1.2.4         colorspace_1.4-0    pryr_0.1.4         
+  [4] ellipsis_0.2.0.1    class_7.3-14        rio_0.5.16         
+  [7] rprojroot_1.3-2     htmlTable_1.13.1    base64enc_0.1-3    
+ [10] fs_1.3.1            rstudioapi_0.9.0    gh_1.0.1           
+ [13] fansi_0.4.0         prodlim_2019.11.13  lubridate_1.7.4    
+ [16] xml2_1.2.0          codetools_0.2-15    splines_3.5.2      
+ [19] mnormt_1.5-5        knitr_1.21          zeallot_0.1.0      
+ [22] jsonlite_1.6        nloptr_1.2.1        broom_0.5.2        
+ [25] cluster_2.0.7-1     shiny_1.2.0         compiler_3.5.2     
+ [28] httr_1.4.1          backports_1.1.3     assertthat_0.2.0   
+ [31] lazyeval_0.2.1      cli_1.1.0           later_0.7.5        
+ [34] acepack_1.4.1       htmltools_0.3.6     tools_3.5.2        
+ [37] gtable_0.2.0        glue_1.3.0          fastmatch_1.1-0    
+ [40] Rcpp_1.0.1          carData_3.0-2       cellranger_1.1.0   
+ [43] vctrs_0.2.0         nlme_3.1-137        timeDate_3043.102  
+ [46] gower_0.2.1         xfun_0.4            openxlsx_4.1.0     
+ [49] rvest_0.3.2         mime_0.6            lifecycle_0.1.0    
+ [52] goftest_1.2-2       MASS_7.3-51.1       ipred_0.9-9        
+ [55] promises_1.0.1      hms_0.4.2           parallel_3.5.2     
+ [58] yaml_2.2.0          curl_3.3            pander_0.6.3       
+ [61] rpart_4.1-13        latticeExtra_0.6-28 stringi_1.2.4      
+ [64] highr_0.7           nortest_1.0-4       checkmate_1.9.1    
+ [67] zip_1.0.0           lava_1.6.6          rlang_0.4.0        
+ [70] pkgconfig_2.0.2     bitops_1.0-6        matrixStats_0.54.0 
+ [73] evaluate_0.12       labeling_0.3        recipes_0.1.8      
+ [76] rapportools_1.0     htmlwidgets_1.3     tidyselect_0.2.5   
+ [79] plyr_1.8.4          magrittr_1.5        R6_2.3.0           
+ [82] magick_2.0          generics_0.0.2      pillar_1.3.1       
+ [85] haven_2.1.1         whisker_0.3-2       withr_2.1.2        
+ [88] abind_1.4-5         RCurl_1.95-4.11     nnet_7.3-12        
+ [91] modelr_0.1.4        crayon_1.3.4        car_3.0-2          
+ [94] utf8_1.1.4          rmarkdown_1.11      grid_3.5.2         
+ [97] readxl_1.3.1        data.table_1.12.0   git2r_0.24.0       
+[100] digest_0.6.18       xtable_1.8-3        httpuv_1.4.5.1     
+[103] munsell_0.5.0       tcltk_3.5.2        </code></pre>
+</div>
 </div>
 </div>
 
