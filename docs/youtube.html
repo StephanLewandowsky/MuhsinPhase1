@@ -594,10 +594,10 @@ environment
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree7007bab648f6f8e64c7ad2abdc1aa379b4e9c2a8targetblank7007baba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/7007bab648f6f8e64c7ad2abdc1aa379b4e9c2a8" target="_blank">7007bab</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree918ca749346356b08980a32f42158d0ab5e8ec37targetblank918ca74a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/918ca749346356b08980a32f42158d0ab5e8ec37" target="_blank">918ca74</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree7007bab648f6f8e64c7ad2abdc1aa379b4e9c2a8targetblank7007baba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree918ca749346356b08980a32f42158d0ab5e8ec37targetblank918ca74a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -648,6 +648,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/918ca749346356b08980a32f42158d0ab5e8ec37/analysis/youtube.Rmd" target="_blank">918ca74</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+wflow_publish(c(“analysis/index.Rmd”, “analysis/youtube.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/StephanLewandowsky/MuhsinPhase1/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/youtube.html" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -849,7 +883,6 @@ library(lattice)
 library(ggplot2)
 library(tabplot)
 library(tidyverse)
-
 library(lme4)
 library(RColorBrewer)
 library(gridExtra)
@@ -863,6 +896,7 @@ library(foreign) #for SPSS
 library(workflowr)
 library(olsrr)
 library(corrplot)
+library(vioplot)
 
 #define working directories
 inputdir &lt;- &quot;data&quot;
@@ -1652,6 +1686,43 @@ Table: Table continues below
         Pct.Valid        100.00       100.00   100.00</code></pre>
 <pre class="r"><code>tableplot(irad)</code></pre>
 <p><img src="figure/youtube.Rmd/radsummary-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-radsummary-1">
+Past versions of radsummary-1.png
+</button>
+</p>
+<div id="fig-radsummary-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/radsummary-1.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>temp1 &lt;- irad %&gt;% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
                             Views,VideoLength,LikesPerView,DislikesPerView,
                             AdConsequentiam, AdHomien, AdPopulum, FalseCause, 
@@ -1668,6 +1739,43 @@ iradmainvars &lt;- data.frame(temp1,
                                      rename_all( ~paste0(., &quot;_log&quot;) ))
 multi.hist(iradmainvars%&gt;%select(contains(&quot;log&quot;)))</code></pre>
 <p><img src="figure/youtube.Rmd/radsummary-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-radsummary-2">
+Past versions of radsummary-2.png
+</button>
+</p>
+<div id="fig-radsummary-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/radsummary-2.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#corrplot...
 RM  &lt;- cor(iradmainvars%&gt;%select(contains(&quot;log&quot;)))
 RM2 &lt;- cor.mtest(iradmainvars%&gt;%select(contains(&quot;log&quot;)), conf.level = .95)
@@ -1679,6 +1787,43 @@ corrplot.mixed(RM, lower.col = &quot;black&quot;, number.cex = 1.2,insig = &quot
                    tl.pos=&quot;lt&quot;,tl.col=&quot;black&quot;,na.label = &quot;.&quot;,bg=&quot;lightgray&quot;,
                    tl.cex=1.5,tl.srt=60)</code></pre>
 <p><img src="figure/youtube.Rmd/radsummary-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-radsummary-3">
+Past versions of radsummary-3.png
+</button>
+</p>
+<div id="fig-radsummary-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/radsummary-3.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#dev.print(pdf,paste(figdir,&quot;cormat.pdf&quot;,sep=&quot;/&quot;))</code></pre>
 </div>
 <div id="predict-various-outcomes-for-radical-islamist" class="section level2">
@@ -1691,7 +1836,82 @@ allradregFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;,radindepvars))
 viewmod &lt;- lm(allradregFormula, data=iradmainvars, na.action=na.omit)
 allradregs &lt;- ols_step_all_possible(viewmod)
 plot(allradregs)</code></pre>
-<p><img src="figure/youtube.Rmd/regradviews-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradviews-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/youtube.Rmd/regradviews-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradviews-1">
+Past versions of regradviews-1.png
+</button>
+</p>
+<div id="fig-regradviews-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/regradviews-1.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/youtube.Rmd/regradviews-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradviews-2">
+Past versions of regradviews-2.png
+</button>
+</p>
+<div id="fig-regradviews-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/regradviews-2.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>topmodels &lt;- allradregs[order(allradregs$n,-allradregs$rsquare) , ]
 topmodels[!duplicated(topmodels$n),]</code></pre>
 <pre><code># A tibble: 5 x 6
@@ -1735,7 +1955,82 @@ allradregFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot
 centmod &lt;- lm(allradregFormula2, data=iradmainvars)
 allradregs2 &lt;- ols_step_all_possible(centmod)
 plot(allradregs2)</code></pre>
-<p><img src="figure/youtube.Rmd/regradcent-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradcent-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/youtube.Rmd/regradcent-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradcent-1">
+Past versions of regradcent-1.png
+</button>
+</p>
+<div id="fig-regradcent-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/regradcent-1.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/youtube.Rmd/regradcent-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradcent-2">
+Past versions of regradcent-2.png
+</button>
+</p>
+<div id="fig-regradcent-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/regradcent-2.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>topmodels2 &lt;- allradregs2[order(allradregs2$n,-allradregs2$rsquare) , ]
 topmodels2[!duplicated(topmodels2$n),]</code></pre>
 <pre><code># A tibble: 7 x 6
@@ -1782,7 +2077,82 @@ allradregFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;,radi
 radl2dmod &lt;- lm(allradregFormula3, data=iradmainvars)
 allradregs3 &lt;- ols_step_all_possible(radl2dmod)
 plot(allradregs3)</code></pre>
-<p><img src="figure/youtube.Rmd/regradl2d-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradl2d-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/youtube.Rmd/regradl2d-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradl2d-1">
+Past versions of regradl2d-1.png
+</button>
+</p>
+<div id="fig-regradl2d-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/regradl2d-1.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/youtube.Rmd/regradl2d-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradl2d-2">
+Past versions of regradl2d-2.png
+</button>
+</p>
+<div id="fig-regradl2d-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/02ca5fb70a43983d6aedb203685b3af8439b25cd/docs/figure/youtube.Rmd/regradl2d-2.png" target="_blank">02ca5fb</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>topmodels3 &lt;- allradregs3[order(allradregs3$n,-allradregs3$rsquare) , ]
 topmodels3[!duplicated(topmodels3$n),]</code></pre>
 <pre><code># A tibble: 5 x 6
@@ -1817,6 +2187,20 @@ Residual standard error: 0.8226 on 21 degrees of freedom
   (3 observations deleted due to missingness)
 Multiple R-squared:  0.4172,    Adjusted R-squared:  0.3895 
 F-statistic: 15.04 on 1 and 21 DF,  p-value: 0.0008702</code></pre>
+</div>
+</div>
+<div id="compare-radicalism-to-islamophobia" class="section level2">
+<h2><span class="header-section-number">0.6</span> Compare radicalism to Islamophobia</h2>
+<pre class="r"><code>#plot violins side by side
+plotvn &lt;- c(&quot;Misinfo/Min&quot;, &quot;Centrality&quot;,   &quot;Views&quot;    , &quot;VidLength&quot;,  &quot;Like2Dislike&quot;,   &quot;Likes/View&quot;,  &quot;Dislikes/View&quot;, &quot;SumRhetoric&quot; )
+x11(width=20,height=10)
+vioplot(iphomainvars %&gt;% select(contains(&quot;_log&quot;)), col = &quot;brown&quot;, plotCentre = &quot;line&quot;, side = &quot;right&quot;,las=1,names=plotvn)
+vioplot(iradmainvars %&gt;% select(contains(&quot;_log&quot;)), col = &quot;darkgreen&quot;, plotCentre = &quot;line&quot;, side = &quot;left&quot;, add = T)
+title(xlab=&quot;Variable&quot;,ylab=&quot;Measure (log transformed)&quot;)
+legend(7,12, fill = c(&quot;brown&quot;, &quot;darkgreen&quot;), legend = c(&quot;Islamophobic&quot;, &quot;Islamist&quot;), title = &quot;Type of video&quot;)</code></pre>
+<p><img src="figure/youtube.Rmd/compr2p-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#combined data set in case statistics are wanted
+phorad &lt;- bind_rows(iphob,irad,.id=&quot;radorphob&quot;)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1842,16 +2226,17 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] corrplot_0.84      olsrr_0.5.2        workflowr_1.4.0   
- [4] foreign_0.8-71     summarytools_0.9.3 scales_1.0.0      
- [7] psych_1.8.12       reshape2_1.4.3     Hmisc_4.1-1       
-[10] Formula_1.2-3      survival_2.43-3    gridExtra_2.3     
-[13] RColorBrewer_1.1-2 lme4_1.1-19        Matrix_1.2-15     
-[16] forcats_0.4.0      stringr_1.3.1      dplyr_0.8.3       
-[19] purrr_0.3.2        readr_1.3.1        tidyr_1.0.0       
-[22] tibble_2.1.3       tidyverse_1.2.1    tabplot_1.3-3     
-[25] ffbase_0.12.7      ff_2.2-14          bit_1.1-14        
-[28] ggplot2_3.2.0      lattice_0.20-38   
+ [1] vioplot_0.3.4      zoo_1.8-4          sm_2.2-5.6        
+ [4] corrplot_0.84      olsrr_0.5.2        workflowr_1.4.0   
+ [7] foreign_0.8-71     summarytools_0.9.3 scales_1.0.0      
+[10] psych_1.8.12       reshape2_1.4.3     Hmisc_4.1-1       
+[13] Formula_1.2-3      survival_2.43-3    gridExtra_2.3     
+[16] RColorBrewer_1.1-2 lme4_1.1-19        Matrix_1.2-15     
+[19] forcats_0.4.0      stringr_1.3.1      dplyr_0.8.3       
+[22] purrr_0.3.2        readr_1.3.1        tidyr_1.0.0       
+[25] tibble_2.1.3       tidyverse_1.2.1    tabplot_1.3-3     
+[28] ffbase_0.12.7      ff_2.2-14          bit_1.1-14        
+[31] ggplot2_3.2.0      lattice_0.20-38   
 
 loaded via a namespace (and not attached):
   [1] minqa_1.2.4         colorspace_1.4-0    pryr_0.1.4         
@@ -1876,7 +2261,7 @@ loaded via a namespace (and not attached):
  [58] yaml_2.2.0          curl_3.3            pander_0.6.3       
  [61] rpart_4.1-13        latticeExtra_0.6-28 stringi_1.2.4      
  [64] highr_0.7           nortest_1.0-4       checkmate_1.9.1    
- [67] zip_1.0.0           lava_1.6.6          rlang_0.4.0        
+ [67] zip_2.0.4           lava_1.6.6          rlang_0.4.0        
  [70] pkgconfig_2.0.2     bitops_1.0-6        matrixStats_0.54.0 
  [73] evaluate_0.12       labeling_0.3        recipes_0.1.8      
  [76] rapportools_1.0     htmlwidgets_1.3     tidyselect_0.2.5   
@@ -1889,7 +2274,6 @@ loaded via a namespace (and not attached):
  [97] readxl_1.3.1        data.table_1.12.0   git2r_0.24.0       
 [100] digest_0.6.18       xtable_1.8-3        httpuv_1.4.5.1     
 [103] munsell_0.5.0       tcltk_3.5.2        </code></pre>
-</div>
 </div>
 </div>
 
