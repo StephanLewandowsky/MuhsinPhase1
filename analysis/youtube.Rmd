@@ -38,8 +38,9 @@ library(olsrr)
 library(corrplot)
 library(vioplot)
 
-#define working directories
+#define working directories and get functions ready
 inputdir <- "data"
+source ("analysis/youtubefuncs.R")
 
 iphob <- read.spss(paste(inputdir,"IslamophobiaSPSSDATA.sav",sep="/"), use.value.labels = TRUE, to.data.frame = TRUE)
 irad <-  read.spss(paste(inputdir,"RadicalisationSPSS.sav",sep="/"), use.value.labels = TRUE, to.data.frame = TRUE)
@@ -61,11 +62,15 @@ temp1$LikesPerView[temp1$LikesPerView==0]<-NA
 temp1$LikestoDislikes[temp1$LikestoDislikes==0]<-NA
 temp1$sumallrhetoric <- temp1 %>% select(AdConsequentiam:CherryPickedData) %>% apply(.,1,sum)
 
+#now look at detailed endogenous variables
+temp2 <- iphob %>% select(AdConsequentiam:MisrepresentationScripture) %>% rename_all( ~paste0(., "_det") )
+
 iphomainvars <- data.frame(temp1,
                            temp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
                                               VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %>% 
                                      mutate_all(~ log(. + .0001)) %>%
-                                     rename_all( ~paste0(., "_log") ))
+                                     rename_all( ~paste0(., "_log") ),
+                           temp2)
 multi.hist(iphomainvars%>%select(contains("log")))
 
 
@@ -82,94 +87,80 @@ corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
                    tl.pos="lt",tl.col="black",na.label = ".",bg="lightgray",
                    tl.cex=1.5,tl.srt=60)
 #dev.print(pdf,paste(figdir,"cormat.pdf",sep="/"))
+RM  <- cor(iphomainvars%>%select(contains("det")))
+RM2 <- cor.mtest(iphomainvars%>%select(contains("det")), conf.level = .95)
+diag(RM)<-NA
 
+x11(width=11,height=10)
+#colnames(RM) <- rownames(RM) <- c("Conservatism","Truth Knowable","Intuitive","Conspiracism","Need for Chaos","Knowledge Source",
+#"Consensus AIDS","Consensus Vaccinations","Consensus Climate")
+corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
+                   upper="ellipse",p.mat = RM2$p,sig.level=.05,
+                   tl.pos="lt",tl.col="black",na.label = ".",bg="lightgray",
+                   tl.cex=1.5,tl.srt=60)
 
 ```
 ## Predict various outcomes for Islamophobia
 
-### Predict views for Islamophobia
+### Predict views for Islamophobia, first from exogenous then endogenous parameters
 ```{r regphobviews, echo=TRUE, warning=FALSE, message=FALSE}
 
-indepvars <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-Views_log)),collapse=" + ")
-
-allregFormula <- as.formula(paste("Views_log ~ ",indepvars))
-viewmod <- lm(allregFormula, data=iphomainvars)
-allregs <- ols_step_all_possible(viewmod)
-plot(allregs)
-
-topmodels <- allregs[order(allregs$n,-allregs$rsquare) , ]
-topmodels[!duplicated(topmodels$n),]
-
-#summarize the 'best' model (3 predictors, model 29)
-indepvars2 <- paste(unlist(str_split(allregs[1,]$predictors," ")),collapse=" + ")
-bmFormula <- as.formula(paste("Views_log ~ ", indepvars2))
-viewbestmod <- lm(bmFormula, data=iphomainvars)
-summary(viewbestmod)
+dv <- "Views_log"
+exovars1 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-dv)),collapse=" + ")
+do1reg(dv, exovars1, iphomainvars)   
+   
+endovars4all <- paste(names(iphomainvars %>% select(contains("det"))),collapse=" + ")
+do1reg(dv, endovars4all, iphomainvars)   
 
 ```
 
-### Predict centrality for Islamophobia
+### Predict centrality for Islamophobia, first from exogenous then endogenous parameters
 ```{r regphobcent, echo=TRUE, warning=FALSE, message=FALSE}
 
-indepvars3 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-BetweennessCentrality_log)),collapse=" + ")
-
-allregFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ",indepvars3))
-centmod <- lm(allregFormula2, data=iphomainvars)
-allregs2 <- ols_step_all_possible(centmod)
-plot(allregs2)
-
-topmodels2 <- allregs2[order(allregs2$n,-allregs2$rsquare) , ]
-topmodels2[!duplicated(topmodels2$n),]
-
-#summarize the 'best' model
-indepvars4 <- paste(unlist(str_split(allregs2[29,]$predictors," ")),collapse=" + ")
-bmFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ", indepvars4))
-centbestmod <- lm(bmFormula2, data=iphomainvars)
-summary(centbestmod)
+dv2 <- "BetweennessCentrality_log"
+exovars2 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-dv2)),collapse=" + ")
+do1reg(dv2, exovars2, iphomainvars)   
+do1reg(dv2, endovars4all, iphomainvars)   
 
 ```
 
-### Predict likes to dislikes for Islamophobia
+### Predict likes to dislikes for Islamophobia, first from exogenous then endogenous parameters
 ```{r regphobl2d, echo=TRUE, warning=FALSE, message=FALSE}
 
-indepvars5 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=" + ")
-
-allregFormula3 <- as.formula(paste("LikestoDislikes_log ~ ",indepvars5))
-l2dmod <- lm(allregFormula3, data=iphomainvars)
-allregs3 <- ols_step_all_possible(l2dmod)
-plot(allregs3)
-
-topmodels3 <- allregs3[order(allregs3$n,-allregs3$rsquare) , ]
-topmodels3[!duplicated(topmodels3$n),]
-
-#summarize the 'best' model
-indepvars6 <- paste(unlist(str_split(allregs3[1,]$predictors," ")),collapse=" + ")
-bmFormula3 <- as.formula(paste("LikestoDislikes_log ~ ", indepvars6))
-l2dbestmod <- lm(bmFormula3, data=iphomainvars)
-summary(l2dbestmod)
+dv3 <- "LikestoDislikes_log"
+#note that all like variables are removed from list of potential predictors
+exovars3 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-contains("ikes"))),collapse=" + ")
+do1reg(dv3, exovars3, iphomainvars)  
+do1reg(dv3, endovars4all, iphomainvars) 
 
 ```
 
 
-## Summary statistics for Radical Islamist
+## Summary statistics for Radical Islamist videos
 ```{r radsummary, echo=TRUE, warning=FALSE, message=FALSE}
 descr(irad)
 tableplot(irad)
 
-temp1 <- irad %>% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
+radtemp1 <- irad %>% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
                             Views,VideoLength,LikesPerView,DislikesPerView,
                             AdConsequentiam, AdHomien, AdPopulum, FalseCause, 
                             Polarisation, InvokingEmotion, Conspiracy, Trolling, DeflectingBlame,
                             MisrepresentationScripture, CherryPickedData)) 
-temp1$LikestoDislikes <- irad$Likes/irad$Dislikes
-temp1$LikestoDislikes[temp1$LikestoDislikes==Inf] <- NA
-temp1$sumallrhetoric <- temp1 %>% select(AdConsequentiam:CherryPickedData) %>% apply(.,1,sum)
+radtemp1$LikestoDislikes <- irad$Likes/irad$Dislikes
+radtemp1$LikestoDislikes[radtemp1$LikestoDislikes==Inf] <- NA
+radtemp1$sumallrhetoric <- radtemp1 %>% select(AdConsequentiam:CherryPickedData) %>% apply(.,1,sum)
 
-iradmainvars <- data.frame(temp1,
-                           temp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
+#now look at detailed endogenous variables, omitting those with no variance
+radtemp2 <- irad %>% select(AdConsequentiam:MisrepresentationScripture) %>% 
+                     rename_all( ~paste0(., "_det") ) %>% 
+                     select(which(as.numeric(lapply(.,sd)) != 0))
+
+iradmainvars <- data.frame(radtemp1,
+                           radtemp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
                                               VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %>% 
                                      mutate_all(~ log(. + .0001)) %>%
-                                     rename_all( ~paste0(., "_log") ))
+                                     rename_all( ~paste0(., "_log") ),
+                           radtemp2)
 multi.hist(iradmainvars%>%select(contains("log")))
 
 
@@ -185,70 +176,49 @@ corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
                    tl.cex=1.5,tl.srt=60)
 #dev.print(pdf,paste(figdir,"cormat.pdf",sep="/"))
 
+RM  <- cor(iradmainvars%>%select(contains("det")))
+RM2 <- cor.mtest(iradmainvars%>%select(contains("det")), conf.level = .95)
+diag(RM)<-NA
+
+x11(width=11,height=10)
+corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
+                   upper="ellipse",p.mat = RM2$p,sig.level=.05,
+                   tl.pos="lt",tl.col="black",na.label = ".",bg="lightgray",
+                   tl.cex=1.5,tl.srt=60)
 
 ```
 ## Predict various outcomes for Radical Islamist
 
-### Predict views for Radical Islamist
+### Predict views for Radical Islamist, first from exogenous then endogenous parameters
 ```{r regradviews, echo=TRUE, warning=FALSE, message=FALSE}
 
-radindepvars <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log: LikestoDislikes_log,sumallrhetoric_log)) %>% select(-Views_log)),collapse=" + ")
-
-allradregFormula <- as.formula(paste("Views_log ~ ",radindepvars))
-viewmod <- lm(allradregFormula, data=iradmainvars, na.action=na.omit)
-allradregs <- ols_step_all_possible(viewmod)
-plot(allradregs)
-
-topmodels <- allradregs[order(allradregs$n,-allradregs$rsquare) , ]
-topmodels[!duplicated(topmodels$n),]
-
-#summarize the 'best' model 
-radindepvars2 <- paste(unlist(str_split(allradregs[6,]$predictors," ")),collapse=" + ")
-radbmFormula <- as.formula(paste("Views_log ~ ", radindepvars2))
-viewbestmod <- lm(radbmFormula, data=iradmainvars)
-summary(viewbestmod)
+raddv <- "Views_log"
+radexovars1 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:sumallrhetoric_log)) %>% select(-raddv)),collapse=" + ")
+do1reg(raddv, radexovars1, iradmainvars)   
+   
+radendovars4all <- paste(names(iradmainvars %>% select(contains("det"))),collapse=" + ")
+do1reg(raddv, radendovars4all, iradmainvars)   
 
 ```
 
-### Predict centrality for Radical Islamist
+### Predict centrality for Radical Islamist, first from exogenous then endogenous parameters
 ```{r regradcent, echo=TRUE, warning=FALSE, message=FALSE}
 
-radindepvars3 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-BetweennessCentrality_log)),collapse=" + ")
-
-allradregFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ",radindepvars3))
-centmod <- lm(allradregFormula2, data=iradmainvars)
-allradregs2 <- ols_step_all_possible(centmod)
-plot(allradregs2)
-
-topmodels2 <- allradregs2[order(allradregs2$n,-allradregs2$rsquare) , ]
-topmodels2[!duplicated(topmodels2$n),]
-
-#summarize the 'best' model
-radindepvars4 <- paste(unlist(str_split(allradregs2[8,]$predictors," ")),collapse=" + ")
-radbmFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ", radindepvars4))
-centbestmod <- lm(radbmFormula2, data=iradmainvars)
-summary(centbestmod)
+raddv2 <- "BetweennessCentrality_log"
+radexovars2 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:sumallrhetoric_log)) %>% select(-raddv2)),collapse=" + ")
+do1reg(raddv2, radexovars2, iradmainvars)   
+do1reg(raddv2, radendovars4all, iradmainvars)   
 
 ```
 
-### Predict likes to dislikes for Radical Islamist
+### Predict likes to dislikes for Radical Islamist, first from exogenous then endogenous parameters
 ```{r regradl2d, echo=TRUE, warning=FALSE, message=FALSE}
 
-radindepvars5 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=" + ")
-
-allradregFormula3 <- as.formula(paste("LikestoDislikes_log ~ ",radindepvars5))
-radl2dmod <- lm(allradregFormula3, data=iradmainvars)
-allradregs3 <- ols_step_all_possible(radl2dmod)
-plot(allradregs3)
-
-topmodels3 <- allradregs3[order(allradregs3$n,-allradregs3$rsquare) , ]
-topmodels3[!duplicated(topmodels3$n),]
-
-#summarize the 'best' model
-radindepvars6 <- paste(unlist(str_split(allradregs3[1,]$predictors," ")),collapse=" + ")
-radbmFormula3 <- as.formula(paste("LikestoDislikes_log ~ ", radindepvars6))
-l2dbestmod <- lm(radbmFormula3, data=iradmainvars)
-summary(l2dbestmod)
+raddv3 <-  "LikestoDislikes_log"
+#note that all like variables are excluded from list of potential predictors
+radexovars3 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=" + ")
+do1reg(raddv3, radexovars3, iradmainvars)  
+do1reg(raddv3, radendovars4all, iradmainvars)   
 
 ```
 
@@ -264,7 +234,6 @@ legend(7,12, fill = c("brown", "darkgreen"), legend = c("Islamophobic", "Islamis
 
 #combined data set in case statistics are wanted
 phorad <- bind_rows(iphob,irad,.id="radorphob")
-
 
 
 ```
