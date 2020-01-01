@@ -594,10 +594,10 @@ environment
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree918ca749346356b08980a32f42158d0ab5e8ec37targetblank918ca74a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/918ca749346356b08980a32f42158d0ab5e8ec37" target="_blank">918ca74</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree6b02997a514884df0472fa7b924111a91436ecddtargetblank6b02997a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/6b02997a514884df0472fa7b924111a91436ecdd" target="_blank">6b02997</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree918ca749346356b08980a32f42158d0ab5e8ec37targetblank918ca74a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree6b02997a514884df0472fa7b924111a91436ecddtargetblank6b02997a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -608,6 +608,7 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  analysis/youtubefuncs.R
     Untracked:  data/IslamophobiaSPSSDATA.sav
     Untracked:  data/RadicalisationSPSS.sav
 
@@ -648,6 +649,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/6b02997a514884df0472fa7b924111a91436ecdd/analysis/youtube.Rmd" target="_blank">6b02997</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+wflow_publish(c(“analysis/index.Rmd”, “analysis/youtube.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/StephanLewandowsky/MuhsinPhase1/a33aac005a93ae96def7c8255f417f42e43f15ea/docs/youtube.html" target="_blank">a33aac0</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -898,8 +933,9 @@ library(olsrr)
 library(corrplot)
 library(vioplot)
 
-#define working directories
+#define working directories and get functions ready
 inputdir &lt;- &quot;data&quot;
+source (&quot;analysis/youtubefuncs.R&quot;)
 
 iphob &lt;- read.spss(paste(inputdir,&quot;IslamophobiaSPSSDATA.sav&quot;,sep=&quot;/&quot;), use.value.labels = TRUE, to.data.frame = TRUE)
 irad &lt;-  read.spss(paste(inputdir,&quot;RadicalisationSPSS.sav&quot;,sep=&quot;/&quot;), use.value.labels = TRUE, to.data.frame = TRUE)
@@ -1088,11 +1124,15 @@ temp1$LikesPerView[temp1$LikesPerView==0]&lt;-NA
 temp1$LikestoDislikes[temp1$LikestoDislikes==0]&lt;-NA
 temp1$sumallrhetoric &lt;- temp1 %&gt;% select(AdConsequentiam:CherryPickedData) %&gt;% apply(.,1,sum)
 
+#now look at detailed endogenous variables
+temp2 &lt;- iphob %&gt;% select(AdConsequentiam:MisrepresentationScripture) %&gt;% rename_all( ~paste0(., &quot;_det&quot;) )
+
 iphomainvars &lt;- data.frame(temp1,
                            temp1 %&gt;% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
                                               VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %&gt;% 
                                      mutate_all(~ log(. + .0001)) %&gt;%
-                                     rename_all( ~paste0(., &quot;_log&quot;) ))
+                                     rename_all( ~paste0(., &quot;_log&quot;) ),
+                           temp2)
 multi.hist(iphomainvars%&gt;%select(contains(&quot;log&quot;)))</code></pre>
 <p><img src="figure/youtube.Rmd/summary-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1182,18 +1222,25 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>#dev.print(pdf,paste(figdir,&quot;cormat.pdf&quot;,sep=&quot;/&quot;))</code></pre>
-</div>
-<div id="predict-various-outcomes-for-islamophobia" class="section level2">
-<h2><span class="header-section-number">0.3</span> Predict various outcomes for Islamophobia</h2>
-<div id="predict-views-for-islamophobia" class="section level3">
-<h3><span class="header-section-number">0.3.1</span> Predict views for Islamophobia</h3>
-<pre class="r"><code>indepvars &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-Views_log)),collapse=&quot; + &quot;)
+<pre class="r"><code>#dev.print(pdf,paste(figdir,&quot;cormat.pdf&quot;,sep=&quot;/&quot;))
+RM  &lt;- cor(iphomainvars%&gt;%select(contains(&quot;det&quot;)))
+RM2 &lt;- cor.mtest(iphomainvars%&gt;%select(contains(&quot;det&quot;)), conf.level = .95)
+diag(RM)&lt;-NA
 
-allregFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;,indepvars))
-viewmod &lt;- lm(allregFormula, data=iphomainvars)
-allregs &lt;- ols_step_all_possible(viewmod)
-plot(allregs)</code></pre>
+x11(width=11,height=10)
+#colnames(RM) &lt;- rownames(RM) &lt;- c(&quot;Conservatism&quot;,&quot;Truth Knowable&quot;,&quot;Intuitive&quot;,&quot;Conspiracism&quot;,&quot;Need for Chaos&quot;,&quot;Knowledge Source&quot;,
+#&quot;Consensus AIDS&quot;,&quot;Consensus Vaccinations&quot;,&quot;Consensus Climate&quot;)
+corrplot.mixed(RM, lower.col = &quot;black&quot;, number.cex = 1.2,insig = &quot;blank&quot;,
+                   upper=&quot;ellipse&quot;,p.mat = RM2$p,sig.level=.05,
+                   tl.pos=&quot;lt&quot;,tl.col=&quot;black&quot;,na.label = &quot;.&quot;,bg=&quot;lightgray&quot;,
+                   tl.cex=1.5,tl.srt=60)</code></pre>
+<p><img src="figure/youtube.Rmd/summary-4.png" width="672" style="display: block; margin: auto;" /> ## Predict various outcomes for Islamophobia</p>
+<div id="predict-views-for-islamophobia-first-from-exogenous-then-endogenous-parameters" class="section level3">
+<h3><span class="header-section-number">0.2.1</span> Predict views for Islamophobia, first from exogenous then endogenous parameters</h3>
+<pre class="r"><code>dv &lt;- &quot;Views_log&quot;
+exovars1 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-dv)),collapse=&quot; + &quot;)
+do1reg(dv, exovars1, iphomainvars)   </code></pre>
+<pre><code>[1] &quot;Views_log  ~  MisinformationPerMinute_log + BetweennessCentrality_log + VideoLength_log + LikestoDislikes_log + LikesPerView_log + DislikesPerView_log + sumallrhetoric_log&quot;</code></pre>
 <p><img src="figure/youtube.Rmd/regphobviews-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobviews-1">
@@ -1270,8 +1317,6 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>topmodels &lt;- allregs[order(allregs$n,-allregs$rsquare) , ]
-topmodels[!duplicated(topmodels$n),]</code></pre>
 <pre><code># A tibble: 7 x 6
   Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
@@ -1281,15 +1326,10 @@ topmodels[!duplicated(topmodels$n),]</code></pre>
 4    64     4 MisinformationPerMi~      0.161          0.0849         3.81 
 5    99     5 MisinformationPerMi~      0.177          0.0810         5.02 
 6   120     6 MisinformationPerMi~      0.191          0.0759         6.27 
-7   127     7 MisinformationPerMi~      0.197          0.0595         8.   </code></pre>
-<pre class="r"><code>#summarize the &#39;best&#39; model (3 predictors, model 29)
-indepvars2 &lt;- paste(unlist(str_split(allregs[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-bmFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;, indepvars2))
-viewbestmod &lt;- lm(bmFormula, data=iphomainvars)
-summary(viewbestmod)</code></pre>
-<pre><code>
+7   127     7 MisinformationPerMi~      0.197          0.0595         8.   
+
 Call:
-lm(formula = bmFormula, data = iphomainvars)
+lm(formula = bmFormula, data = d4regglobal)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
@@ -1305,16 +1345,179 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 Residual standard error: 2.052 on 47 degrees of freedom
   (1 observation deleted due to missingness)
 Multiple R-squared:  0.1087,    Adjusted R-squared:  0.08971 
-F-statistic:  5.73 on 1 and 47 DF,  p-value: 0.02072</code></pre>
-</div>
-<div id="predict-centrality-for-islamophobia" class="section level3">
-<h3><span class="header-section-number">0.3.2</span> Predict centrality for Islamophobia</h3>
-<pre class="r"><code>indepvars3 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-BetweennessCentrality_log)),collapse=&quot; + &quot;)
+F-statistic:  5.73 on 1 and 47 DF,  p-value: 0.02072
 
-allregFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;,indepvars3))
-centmod &lt;- lm(allregFormula2, data=iphomainvars)
-allregs2 &lt;- ols_step_all_possible(centmod)
-plot(allregs2)</code></pre>
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.0869 -1.2507  0.3872  1.6496  3.1722 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        9.7217     1.5350   6.333 9.15e-08 ***
+VideoLength_log   -0.4184     0.3420  -1.224   0.2274    
+LikesPerView_log  -0.8428     0.3472  -2.427   0.0192 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.041 on 46 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.1368,    Adjusted R-squared:  0.09923 
+F-statistic: 3.644 on 2 and 46 DF,  p-value: 0.03396
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.1968 -1.4450  0.1045  1.5559  2.9908 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                  10.2243     1.6823   6.077  2.4e-07 ***
+MisinformationPerMinute_log   0.4239     0.3608   1.175   0.2462    
+LikesPerView_log             -0.8088     0.3532  -2.290   0.0268 *  
+sumallrhetoric_log           -0.6899     0.5044  -1.368   0.1782    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.048 on 45 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.1493,    Adjusted R-squared:  0.09261 
+F-statistic: 2.633 on 3 and 45 DF,  p-value: 0.06137
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.2187 -1.1947  0.1198  1.5010  2.8607 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                   9.0214     2.3861   3.781 0.000467 ***
+MisinformationPerMinute_log   0.4133     0.3626   1.140 0.260464    
+LikestoDislikes_log          -0.7895     0.3478  -2.270 0.028165 *  
+DislikesPerView_log          -1.0062     0.4406  -2.284 0.027281 *  
+sumallrhetoric_log           -0.6750     0.5102  -1.323 0.192676    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.057 on 44 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.1612,    Adjusted R-squared:  0.08495 
+F-statistic: 2.114 on 4 and 44 DF,  p-value: 0.09509</code></pre>
+<pre class="r"><code>endovars4all &lt;- paste(names(iphomainvars %&gt;% select(contains(&quot;det&quot;))),collapse=&quot; + &quot;)
+do1reg(dv, endovars4all, iphomainvars)   </code></pre>
+<pre><code>[1] &quot;Views_log  ~  AdConsequentiam_det + AdHomien_det + AdPopulum_det + FalseCause_det + HastyGeneralisations_det + Polarisation_det + InvokingEmotion_det + Conspiracy_det + Trolling_det + DeflectingBlame_det + MisrepresentationScripture_det&quot;</code></pre>
+<p><img src="figure/youtube.Rmd/regphobviews-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regphobviews-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code># A tibble: 11 x 6
+   Index     N Predictors          `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+ 1     1     1 FalseCause_det           0.150           0.132          9.19
+ 2    12     2 AdPopulum_det Fals~      0.250           0.218          4.71
+ 3    67     3 AdPopulum_det Fals~      0.313           0.268          2.60
+ 4   232     4 AdPopulum_det Fals~      0.358           0.300          1.72
+ 5   562     5 AdPopulum_det Fals~      0.377           0.306          2.46
+ 6  1024     6 AdPopulum_det Fals~      0.387           0.302          3.81
+ 7  1486     7 AdPopulum_det Fals~      0.398           0.297          5.13
+ 8  1816     8 AdPopulum_det Fals~      0.411           0.295          6.28
+ 9  1981     9 AdPopulum_det Fals~      0.413           0.281          8.14
+10  2036    10 AdConsequentiam_de~      0.415           0.265         10.0 
+11  2047    11 AdConsequentiam_de~      0.415           0.246         12   
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.3963 -1.3478  0.0685  1.5574  3.0899 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     12.4149     0.3310  37.507  &lt; 2e-16 ***
+FalseCause_det  -1.1865     0.4074  -2.912  0.00543 ** 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.069 on 48 degrees of freedom
+Multiple R-squared:  0.1501,    Adjusted R-squared:  0.1324 
+F-statistic:  8.48 on 1 and 48 DF,  p-value: 0.005433
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.5237 -1.1708  0.0566  1.4300  2.9625 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     12.5423     0.3184  39.397  &lt; 2e-16 ***
+AdPopulum_det   -4.9754     1.9897  -2.501  0.01594 *  
+FalseCause_det  -1.2598     0.3879  -3.248  0.00215 ** 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.964 on 47 degrees of freedom
+Multiple R-squared:  0.2499,    Adjusted R-squared:  0.218 
+F-statistic: 7.831 on 2 and 47 DF,  p-value: 0.001161
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.1104 -1.1024  0.1545  1.1274  3.3758 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)       12.8449     0.3412  37.643  &lt; 2e-16 ***
+AdPopulum_det     -4.5622     1.9349  -2.358  0.02269 *  
+FalseCause_det    -1.1737     0.3775  -3.109  0.00322 ** 
+Polarisation_det  -0.7160     0.3478  -2.059  0.04523 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.9 on 46 degrees of freedom
+Multiple R-squared:  0.3132,    Adjusted R-squared:  0.2684 
+F-statistic: 6.993 on 3 and 46 DF,  p-value: 0.0005674
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.3043 -0.9930  0.0055  1.2574  3.7703 
+
+Coefficients:
+                               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                     13.2037     0.3908  33.786  &lt; 2e-16 ***
+AdPopulum_det                   -4.7560     1.8952  -2.509  0.01576 *  
+FalseCause_det                  -1.2490     0.3716  -3.361  0.00159 ** 
+Polarisation_det                -0.8808     0.3527  -2.497  0.01624 *  
+MisrepresentationScripture_det  -0.5884     0.3337  -1.763  0.08465 .  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.858 on 45 degrees of freedom
+Multiple R-squared:  0.3576,    Adjusted R-squared:  0.3005 
+F-statistic: 6.262 on 4 and 45 DF,  p-value: 0.0004288</code></pre>
+</div>
+<div id="predict-centrality-for-islamophobia-first-from-exogenous-then-endogenous-parameters" class="section level3">
+<h3><span class="header-section-number">0.2.2</span> Predict centrality for Islamophobia, first from exogenous then endogenous parameters</h3>
+<pre class="r"><code>dv2 &lt;- &quot;BetweennessCentrality_log&quot;
+exovars2 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-dv2)),collapse=&quot; + &quot;)
+do1reg(dv2, exovars2, iphomainvars)   </code></pre>
+<pre><code>[1] &quot;BetweennessCentrality_log  ~  MisinformationPerMinute_log + Views_log + VideoLength_log + LikestoDislikes_log + LikesPerView_log + DislikesPerView_log + sumallrhetoric_log&quot;</code></pre>
 <p><img src="figure/youtube.Rmd/regphobcent-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobcent-1">
@@ -1391,8 +1594,6 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>topmodels2 &lt;- allregs2[order(allregs2$n,-allregs2$rsquare) , ]
-topmodels2[!duplicated(topmodels2$n),]</code></pre>
 <pre><code># A tibble: 7 x 6
   Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
@@ -1402,15 +1603,51 @@ topmodels2[!duplicated(topmodels2$n),]</code></pre>
 4    64     4 LikestoDislikes_log~     0.106          0.0248          2.59 
 5    99     5 Views_log LikestoDi~     0.114          0.0115          4.20 
 6   120     6 MisinformationPerMi~     0.119         -0.00721         6.00 
-7   127     7 MisinformationPerMi~     0.119         -0.0318          8    </code></pre>
-<pre class="r"><code>#summarize the &#39;best&#39; model
-indepvars4 &lt;- paste(unlist(str_split(allregs2[29,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-bmFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;, indepvars4))
-centbestmod &lt;- lm(bmFormula2, data=iphomainvars)
-summary(centbestmod)</code></pre>
-<pre><code>
+7   127     7 MisinformationPerMi~     0.119         -0.0318          8    
+
 Call:
-lm(formula = bmFormula2, data = iphomainvars)
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.71986 -0.51278  0.08464  0.64840  1.54485 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         12.20380    0.22203  54.965   &lt;2e-16 ***
+LikestoDislikes_log -0.12103    0.08482  -1.427     0.16    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.8051 on 47 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.04151,   Adjusted R-squared:  0.02112 
+F-statistic: 2.036 on 1 and 47 DF,  p-value: 0.1603
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.72902 -0.50914 -0.07625  0.57953  1.39369 
+
+Coefficients:
+                   Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         10.7611     0.6160  17.470   &lt;2e-16 ***
+LikesPerView_log    -0.2194     0.1373  -1.599    0.117    
+sumallrhetoric_log   0.2402     0.1662   1.445    0.155    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.7971 on 46 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.0804,    Adjusted R-squared:  0.04042 
+F-statistic: 2.011 on 2 and 46 DF,  p-value: 0.1455
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
@@ -1428,16 +1665,136 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 Residual standard error: 0.802 on 45 degrees of freedom
   (1 observation deleted due to missingness)
 Multiple R-squared:  0.08927,   Adjusted R-squared:  0.02855 
-F-statistic:  1.47 on 3 and 45 DF,  p-value: 0.2353</code></pre>
-</div>
-<div id="predict-likes-to-dislikes-for-islamophobia" class="section level3">
-<h3><span class="header-section-number">0.3.3</span> Predict likes to dislikes for Islamophobia</h3>
-<pre class="r"><code>indepvars5 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=&quot; + &quot;)
+F-statistic:  1.47 on 3 and 45 DF,  p-value: 0.2353
 
-allregFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;,indepvars5))
-l2dmod &lt;- lm(allregFormula3, data=iphomainvars)
-allregs3 &lt;- ols_step_all_possible(l2dmod)
-plot(allregs3)</code></pre>
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.68952 -0.50150 -0.02675  0.60028  1.46513 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          11.6059     1.0011  11.593 5.77e-15 ***
+LikestoDislikes_log   1.8827     2.0728   0.908    0.369    
+LikesPerView_log     -2.1552     2.1254  -1.014    0.316    
+DislikesPerView_log   2.0911     2.2264   0.939    0.353    
+sumallrhetoric_log    0.2965     0.1863   1.592    0.119    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.8036 on 44 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.106, Adjusted R-squared:  0.02476 
+F-statistic: 1.305 on 4 and 44 DF,  p-value: 0.2831</code></pre>
+<pre class="r"><code>do1reg(dv2, endovars4all, iphomainvars)   </code></pre>
+<pre><code>[1] &quot;BetweennessCentrality_log  ~  AdConsequentiam_det + AdHomien_det + AdPopulum_det + FalseCause_det + HastyGeneralisations_det + Polarisation_det + InvokingEmotion_det + Conspiracy_det + Trolling_det + DeflectingBlame_det + MisrepresentationScripture_det&quot;</code></pre>
+<p><img src="figure/youtube.Rmd/regphobcent-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regphobcent-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code># A tibble: 11 x 6
+   Index     N Predictors          `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+ 1     1     1 Conspiracy_det          0.0500         0.0302         -5.03 
+ 2    12     2 Conspiracy_det Mis~     0.0787         0.0395         -4.26 
+ 3    67     3 AdPopulum_det Cons~     0.0943         0.0353         -2.94 
+ 4   232     4 AdPopulum_det Invo~     0.104          0.0243         -1.35 
+ 5   562     5 AdPopulum_det Fals~     0.109          0.00775         0.429
+ 6  1024     6 AdPopulum_det Fals~     0.113         -0.0109          2.26 
+ 7  1486     7 AdPopulum_det Fals~     0.117         -0.0302          4.08 
+ 8  1816     8 AdHomien_det AdPop~     0.118         -0.0537          6.03 
+ 9  1981     9 AdHomien_det AdPop~     0.119         -0.0794          8.00 
+10  2036    10 AdConsequentiam_de~     0.119         -0.107          10.0  
+11  2047    11 AdConsequentiam_de~     0.119         -0.136          12    
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.66380 -0.52463  0.08799  0.50558  1.53448 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     11.8527     0.1214  97.658   &lt;2e-16 ***
+Conspiracy_det   0.3307     0.2081   1.589    0.119    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.7948 on 48 degrees of freedom
+Multiple R-squared:  0.04997,   Adjusted R-squared:  0.03017 
+F-statistic: 2.525 on 1 and 48 DF,  p-value: 0.1187
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.73416 -0.44029  0.06555  0.43522  1.62800 
+
+Coefficients:
+                               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                     11.9231     0.1340  88.954   &lt;2e-16 ***
+Conspiracy_det                   0.3237     0.2072   1.562    0.125    
+MisrepresentationScripture_det  -0.1639     0.1353  -1.211    0.232    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.791 on 47 degrees of freedom
+Multiple R-squared:  0.07871,   Adjusted R-squared:  0.0395 
+F-statistic: 2.008 on 2 and 47 DF,  p-value: 0.1457
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.74373 -0.41057  0.02349  0.41406  1.62670 
+
+Coefficients:
+                               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                     11.9326     0.1348  88.547   &lt;2e-16 ***
+AdPopulum_det                   -0.7304     0.8203  -0.890   0.3779    
+Conspiracy_det                   0.3625     0.2122   1.708   0.0943 .  
+MisrepresentationScripture_det  -0.1722     0.1360  -1.266   0.2118    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.7927 on 46 degrees of freedom
+Multiple R-squared:  0.09432,   Adjusted R-squared:  0.03525 
+F-statistic: 1.597 on 3 and 46 DF,  p-value: 0.2031
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.74724 -0.40336 -0.00654  0.41751  1.44170 
+
+Coefficients:
+                               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                    11.85213    0.17840  66.434   &lt;2e-16 ***
+AdPopulum_det                  -0.78086    0.82814  -0.943    0.351    
+InvokingEmotion_det             0.08402    0.12108   0.694    0.491    
+Conspiracy_det                  0.32541    0.21998   1.479    0.146    
+MisrepresentationScripture_det -0.15870    0.13810  -1.149    0.257    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.7972 on 45 degrees of freedom
+Multiple R-squared:  0.1039,    Adjusted R-squared:  0.02425 
+F-statistic: 1.304 on 4 and 45 DF,  p-value: 0.2828</code></pre>
+</div>
+<div id="predict-likes-to-dislikes-for-islamophobia-first-from-exogenous-then-endogenous-parameters" class="section level3">
+<h3><span class="header-section-number">0.2.3</span> Predict likes to dislikes for Islamophobia, first from exogenous then endogenous parameters</h3>
+<pre class="r"><code>dv3 &lt;- &quot;LikestoDislikes_log&quot;
+#note that all like variables are removed from list of potential predictors
+exovars3 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-contains(&quot;ikes&quot;))),collapse=&quot; + &quot;)
+do1reg(dv3, exovars3, iphomainvars)  </code></pre>
+<pre><code>[1] &quot;LikestoDislikes_log  ~  MisinformationPerMinute_log + BetweennessCentrality_log + Views_log + VideoLength_log + sumallrhetoric_log&quot;</code></pre>
 <p><img src="figure/youtube.Rmd/regphobl2d-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobl2d-1">
@@ -1514,8 +1871,6 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>topmodels3 &lt;- allregs3[order(allregs3$n,-allregs3$rsquare) , ]
-topmodels3[!duplicated(topmodels3$n),]</code></pre>
 <pre><code># A tibble: 5 x 6
   Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
@@ -1523,15 +1878,10 @@ topmodels3[!duplicated(topmodels3$n),]</code></pre>
 2     6     2 BetweennessCentrali~     0.0477         0.00630         0.455
 3    16     3 BetweennessCentrali~     0.0549        -0.00807         2.13 
 4    26     4 MisinformationPerMi~     0.0554        -0.0305          4.11 
-5    31     5 MisinformationPerMi~     0.0577        -0.0519          6    </code></pre>
-<pre class="r"><code>#summarize the &#39;best&#39; model
-indepvars6 &lt;- paste(unlist(str_split(allregs3[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-bmFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;, indepvars6))
-l2dbestmod &lt;- lm(bmFormula3, data=iphomainvars)
-summary(l2dbestmod)</code></pre>
-<pre><code>
+5    31     5 MisinformationPerMi~     0.0577        -0.0519          6    
+
 Call:
-lm(formula = bmFormula3, data = iphomainvars)
+lm(formula = bmFormula, data = d4regglobal)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
@@ -1547,11 +1897,108 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 Residual standard error: 1.355 on 47 degrees of freedom
   (1 observation deleted due to missingness)
 Multiple R-squared:  0.04151,   Adjusted R-squared:  0.02112 
-F-statistic: 2.036 on 1 and 47 DF,  p-value: 0.1603</code></pre>
+F-statistic: 2.036 on 1 and 47 DF,  p-value: 0.1603
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.0713 -0.9051 -0.3647  0.7155  4.3501 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                 6.5950     2.9367   2.246   0.0296 *
+BetweennessCentrality_log  -0.3426     0.2422  -1.414   0.1640  
+VideoLength_log            -0.1251     0.2288  -0.547   0.5872  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.366 on 46 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.0477,    Adjusted R-squared:  0.006298 
+F-statistic: 1.152 on 2 and 46 DF,  p-value: 0.3249
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.9520 -0.9427 -0.2438  0.7833  4.3454 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                7.13914    3.09976   2.303   0.0259 *
+BetweennessCentrality_log -0.32846    0.24516  -1.340   0.1871  
+Views_log                 -0.05517    0.09401  -0.587   0.5602  
+VideoLength_log           -0.14742    0.23356  -0.631   0.5311  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.375 on 45 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.05494,   Adjusted R-squared:  -0.008068 
+F-statistic: 0.8719 on 3 and 45 DF,  p-value: 0.4627
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.9521 -0.9238 -0.2126  0.7859  4.2853 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                  7.12145    3.13656   2.270   0.0281 *
+MisinformationPerMinute_log -0.04279    0.30204  -0.142   0.8880  
+BetweennessCentrality_log   -0.32132    0.25296  -1.270   0.2107  
+Views_log                   -0.05714    0.09606  -0.595   0.5550  
+VideoLength_log             -0.18281    0.34377  -0.532   0.5976  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.391 on 44 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.05537,   Adjusted R-squared:  -0.03051 
+F-statistic: 0.6447 on 4 and 44 DF,  p-value: 0.6335</code></pre>
+<pre class="r"><code>do1reg(dv3, endovars4all, iphomainvars) </code></pre>
+<pre><code>[1] &quot;LikestoDislikes_log  ~  AdConsequentiam_det + AdHomien_det + AdPopulum_det + FalseCause_det + HastyGeneralisations_det + Polarisation_det + InvokingEmotion_det + Conspiracy_det + Trolling_det + DeflectingBlame_det + MisrepresentationScripture_det&quot;
+
+Call:
+lm(formula = allregFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.4398 -0.7221 -0.1797  0.7063  4.1315 
+
+Coefficients: (1 not defined because of singularities)
+                               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                     2.47540    0.41796   5.923 7.27e-07 ***
+AdConsequentiam_det             0.07437    0.37518   0.198    0.844    
+AdHomien_det                    0.67959    0.78137   0.870    0.390    
+AdPopulum_det                        NA         NA      NA       NA    
+FalseCause_det                 -0.05031    0.31148  -0.162    0.873    
+HastyGeneralisations_det       -0.03409    0.17194  -0.198    0.844    
+Polarisation_det               -0.45692    0.30144  -1.516    0.138    
+InvokingEmotion_det            -0.03814    0.22841  -0.167    0.868    
+Conspiracy_det                  0.56413    0.50367   1.120    0.270    
+Trolling_det                    0.16326    0.80644   0.202    0.841    
+DeflectingBlame_det            -0.70924    1.27355  -0.557    0.581    
+MisrepresentationScripture_det -0.36304    0.26980  -1.346    0.186    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.393 on 38 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.1815,    Adjusted R-squared:  -0.03391 
+F-statistic: 0.8426 on 10 and 38 DF,  p-value: 0.5919</code></pre>
 </div>
 </div>
-<div id="summary-statistics-for-radical-islamist" class="section level2">
-<h2><span class="header-section-number">0.4</span> Summary statistics for Radical Islamist</h2>
+<div id="summary-statistics-for-radical-islamist-videos" class="section level2">
+<h2><span class="header-section-number">0.3</span> Summary statistics for Radical Islamist videos</h2>
 <pre class="r"><code>descr(irad)</code></pre>
 <pre><code>Descriptive Statistics  
 irad  
@@ -1723,20 +2170,26 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>temp1 &lt;- irad %&gt;% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
+<pre class="r"><code>radtemp1 &lt;- irad %&gt;% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
                             Views,VideoLength,LikesPerView,DislikesPerView,
                             AdConsequentiam, AdHomien, AdPopulum, FalseCause, 
                             Polarisation, InvokingEmotion, Conspiracy, Trolling, DeflectingBlame,
                             MisrepresentationScripture, CherryPickedData)) 
-temp1$LikestoDislikes &lt;- irad$Likes/irad$Dislikes
-temp1$LikestoDislikes[temp1$LikestoDislikes==Inf] &lt;- NA
-temp1$sumallrhetoric &lt;- temp1 %&gt;% select(AdConsequentiam:CherryPickedData) %&gt;% apply(.,1,sum)
+radtemp1$LikestoDislikes &lt;- irad$Likes/irad$Dislikes
+radtemp1$LikestoDislikes[radtemp1$LikestoDislikes==Inf] &lt;- NA
+radtemp1$sumallrhetoric &lt;- radtemp1 %&gt;% select(AdConsequentiam:CherryPickedData) %&gt;% apply(.,1,sum)
 
-iradmainvars &lt;- data.frame(temp1,
-                           temp1 %&gt;% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
+#now look at detailed endogenous variables, omitting those with no variance
+radtemp2 &lt;- irad %&gt;% select(AdConsequentiam:MisrepresentationScripture) %&gt;% 
+                     rename_all( ~paste0(., &quot;_det&quot;) ) %&gt;% 
+                     select(which(as.numeric(lapply(.,sd)) != 0))
+
+iradmainvars &lt;- data.frame(radtemp1,
+                           radtemp1 %&gt;% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
                                               VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %&gt;% 
                                      mutate_all(~ log(. + .0001)) %&gt;%
-                                     rename_all( ~paste0(., &quot;_log&quot;) ))
+                                     rename_all( ~paste0(., &quot;_log&quot;) ),
+                           radtemp2)
 multi.hist(iradmainvars%&gt;%select(contains(&quot;log&quot;)))</code></pre>
 <p><img src="figure/youtube.Rmd/radsummary-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1824,18 +2277,24 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>#dev.print(pdf,paste(figdir,&quot;cormat.pdf&quot;,sep=&quot;/&quot;))</code></pre>
-</div>
-<div id="predict-various-outcomes-for-radical-islamist" class="section level2">
-<h2><span class="header-section-number">0.5</span> Predict various outcomes for Radical Islamist</h2>
-<div id="predict-views-for-radical-islamist" class="section level3">
-<h3><span class="header-section-number">0.5.1</span> Predict views for Radical Islamist</h3>
-<pre class="r"><code>radindepvars &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log: LikestoDislikes_log,sumallrhetoric_log)) %&gt;% select(-Views_log)),collapse=&quot; + &quot;)
+<pre class="r"><code>#dev.print(pdf,paste(figdir,&quot;cormat.pdf&quot;,sep=&quot;/&quot;))
 
-allradregFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;,radindepvars))
-viewmod &lt;- lm(allradregFormula, data=iradmainvars, na.action=na.omit)
-allradregs &lt;- ols_step_all_possible(viewmod)
-plot(allradregs)</code></pre>
+RM  &lt;- cor(iradmainvars%&gt;%select(contains(&quot;det&quot;)))
+RM2 &lt;- cor.mtest(iradmainvars%&gt;%select(contains(&quot;det&quot;)), conf.level = .95)
+diag(RM)&lt;-NA
+
+x11(width=11,height=10)
+corrplot.mixed(RM, lower.col = &quot;black&quot;, number.cex = 1.2,insig = &quot;blank&quot;,
+                   upper=&quot;ellipse&quot;,p.mat = RM2$p,sig.level=.05,
+                   tl.pos=&quot;lt&quot;,tl.col=&quot;black&quot;,na.label = &quot;.&quot;,bg=&quot;lightgray&quot;,
+                   tl.cex=1.5,tl.srt=60)</code></pre>
+<p><img src="figure/youtube.Rmd/radsummary-4.png" width="672" style="display: block; margin: auto;" /> ## Predict various outcomes for Radical Islamist</p>
+<div id="predict-views-for-radical-islamist-first-from-exogenous-then-endogenous-parameters" class="section level3">
+<h3><span class="header-section-number">0.3.1</span> Predict views for Radical Islamist, first from exogenous then endogenous parameters</h3>
+<pre class="r"><code>raddv &lt;- &quot;Views_log&quot;
+radexovars1 &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log:sumallrhetoric_log)) %&gt;% select(-raddv)),collapse=&quot; + &quot;)
+do1reg(raddv, radexovars1, iradmainvars)   </code></pre>
+<pre><code>[1] &quot;Views_log  ~  MisinformationPerMinute_log + BetweennessCentrality_log + VideoLength_log + LikestoDislikes_log + LikesPerView_log + DislikesPerView_log + sumallrhetoric_log&quot;</code></pre>
 <p><img src="figure/youtube.Rmd/regradviews-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradviews-1">
@@ -1912,49 +2371,201 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>topmodels &lt;- allradregs[order(allradregs$n,-allradregs$rsquare) , ]
-topmodels[!duplicated(topmodels$n),]</code></pre>
-<pre><code># A tibble: 5 x 6
+<pre><code># A tibble: 7 x 6
   Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-1     1     1 BetweennessCentrali~     0.0773          0.0389        -0.149
-2     6     2 BetweennessCentrali~     0.129           0.0535         0.621
-3    16     3 MisinformationPerMi~     0.132           0.0131         2.57 
-4    26     4 MisinformationPerMi~     0.132          -0.0339         4.57 
-5    31     5 MisinformationPerMi~     0.0521         -0.227          6    </code></pre>
-<pre class="r"><code>#summarize the &#39;best&#39; model 
-radindepvars2 &lt;- paste(unlist(str_split(allradregs[6,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-radbmFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;, radindepvars2))
-viewbestmod &lt;- lm(radbmFormula, data=iradmainvars)
-summary(viewbestmod)</code></pre>
-<pre><code>
+1     1     1 DislikesPerView_log      0.0876          0.0496          6.05
+2     8     2 LikesPerView_log Di~     0.199           0.130           4.62
+3    29     3 LikestoDislikes_log~     0.280           0.166           1.77
+4    64     4 BetweennessCentrali~     0.308           0.177           5.27
+5    99     5 MisinformationPerMi~     0.335           0.139           4.49
+6   120     6 MisinformationPerMi~     0.352           0.110           6.08
+7   127     7 MisinformationPerMi~     0.356           0.0552          8   
+
 Call:
-lm(formula = radbmFormula, data = iradmainvars)
+lm(formula = bmFormula, data = d4regglobal)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--3.4350 -1.8649  0.3523  1.2451  3.3789 
+-3.0312 -1.6391  0.0405  1.2487  3.5312 
 
 Coefficients:
-                          Estimate Std. Error t value Pr(&gt;|t|)  
-(Intercept)                 3.6720     3.6540   1.005   0.3254  
-BetweennessCentrality_log   0.5439     0.3020   1.801   0.0849 .
-VideoLength_log             0.4417     0.3771   1.171   0.2534  
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          13.1717     1.8767   7.019 2.95e-07 ***
+DislikesPerView_log   0.4310     0.2839   1.518    0.142    
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
-Residual standard error: 1.954 on 23 degrees of freedom
-Multiple R-squared:  0.1293,    Adjusted R-squared:  0.05354 
-F-statistic: 1.707 on 2 and 23 DF,  p-value: 0.2036</code></pre>
-</div>
-<div id="predict-centrality-for-radical-islamist" class="section level3">
-<h3><span class="header-section-number">0.5.2</span> Predict centrality for Radical Islamist</h3>
-<pre class="r"><code>radindepvars3 &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-BetweennessCentrality_log)),collapse=&quot; + &quot;)
+Residual standard error: 1.959 on 24 degrees of freedom
+Multiple R-squared:  0.08763,   Adjusted R-squared:  0.04961 
+F-statistic: 2.305 on 1 and 24 DF,  p-value: 0.142
 
-allradregFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;,radindepvars3))
-centmod &lt;- lm(allradregFormula2, data=iradmainvars)
-allradregs2 &lt;- ols_step_all_possible(centmod)
-plot(allradregs2)</code></pre>
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.8708 -1.5349 -0.2711  1.7031  3.2950 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          11.3831     2.0552   5.539 1.24e-05 ***
+LikesPerView_log     -0.4906     0.2741  -1.790   0.0866 .  
+DislikesPerView_log   0.5332     0.2776   1.921   0.0673 .  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.874 on 23 degrees of freedom
+Multiple R-squared:  0.1992,    Adjusted R-squared:  0.1296 
+F-statistic: 2.861 on 2 and 23 DF,  p-value: 0.07771
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.5084 -0.9728 -0.4674  1.0417  3.1191 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)           6.2537     2.5578   2.445   0.0244 *
+LikestoDislikes_log   1.1514     0.4933   2.334   0.0307 *
+LikesPerView_log     -1.2896     0.4885  -2.640   0.0161 *
+DislikesPerView_log   0.5634     0.3648   1.544   0.1390  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.702 on 19 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.2799,    Adjusted R-squared:  0.1662 
+F-statistic: 2.462 on 3 and 19 DF,  p-value: 0.09388
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.97511 -1.00950  0.01101  1.25789  3.01438 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                 5.4809     3.8228   1.434   0.1664  
+BetweennessCentrality_log   0.4353     0.2994   1.454   0.1608  
+VideoLength_log             0.5457     0.3790   1.440   0.1646  
+LikesPerView_log           -0.4938     0.3200  -1.543   0.1378  
+DislikesPerView_log         0.5145     0.2727   1.886   0.0731 .
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.823 on 21 degrees of freedom
+Multiple R-squared:  0.3083,    Adjusted R-squared:  0.1766 
+F-statistic:  2.34 on 4 and 21 DF,  p-value: 0.0883</code></pre>
+<pre class="r"><code>radendovars4all &lt;- paste(names(iradmainvars %&gt;% select(contains(&quot;det&quot;))),collapse=&quot; + &quot;)
+do1reg(raddv, radendovars4all, iradmainvars)   </code></pre>
+<pre><code>[1] &quot;Views_log  ~  AdConsequentiam_det + AdPopulum_det + HastyGeneralisation_det + Polarisation_det + InvokingEmotion_det + Conspiracy_det + CherryPickedData_det + MisrepresentationScripture_det&quot;</code></pre>
+<p><img src="figure/youtube.Rmd/regradviews-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradviews-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code># A tibble: 8 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 AdPopulum_det            0.0456         0.00586        -2.54 
+2     9     2 AdPopulum_det Cherr~     0.0816         0.00176        -1.28 
+3    37     3 AdPopulum_det Consp~     0.0974        -0.0257          0.402
+4    93     4 AdPopulum_det Hasty~     0.120         -0.0472          1.93 
+5   163     5 AdPopulum_det Hasty~     0.143         -0.0707          3.46 
+6   219     6 AdConsequentiam_det~     0.157         -0.109           5.19 
+7   247     7 AdConsequentiam_det~     0.164         -0.161           7.05 
+8   255     8 AdConsequentiam_det~     0.166         -0.226           9    
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.3327 -1.6887  0.2433  1.2814  3.8255 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    10.2405     0.4147  24.695   &lt;2e-16 ***
+AdPopulum_det   0.9246     0.8632   1.071    0.295    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.003 on 24 degrees of freedom
+Multiple R-squared:  0.04562,   Adjusted R-squared:  0.005858 
+F-statistic: 1.147 on 1 and 24 DF,  p-value: 0.2948
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4162 -1.5861  0.1599  1.2245  3.7421 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           10.3240     0.4247  24.307   &lt;2e-16 ***
+AdPopulum_det          0.8690     0.8670   1.002    0.327    
+CherryPickedData_det  -1.9479     2.0517  -0.949    0.352    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.007 on 23 degrees of freedom
+Multiple R-squared:  0.08162,   Adjusted R-squared:  0.001756 
+F-statistic: 1.022 on 2 and 23 DF,  p-value: 0.3756
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.0416 -1.7965  0.1134  1.3110  3.4902 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           10.5758     0.5916  17.878 1.37e-14 ***
+AdPopulum_det          0.9823     0.8976   1.094    0.286    
+Conspiracy_det        -0.2411     0.3883  -0.621    0.541    
+CherryPickedData_det  -1.7176     2.1125  -0.813    0.425    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.035 on 22 degrees of freedom
+Multiple R-squared:  0.09743,   Adjusted R-squared:  -0.02565 
+F-statistic: 0.7916 on 3 and 22 DF,  p-value: 0.5116
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.0394 -1.6006  0.2417  1.3779  3.5870 
+
+Coefficients:
+                        Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              10.4790     0.6119  17.126 8.14e-14 ***
+AdPopulum_det             1.0293     0.9092   1.132    0.270    
+HastyGeneralisation_det   0.2586     0.3496   0.740    0.468    
+Conspiracy_det           -0.3738     0.4314  -0.866    0.396    
+CherryPickedData_det     -2.3899     2.3199  -1.030    0.315    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.056 on 21 degrees of freedom
+Multiple R-squared:  0.1204,    Adjusted R-squared:  -0.0472 
+F-statistic: 0.7183 on 4 and 21 DF,  p-value: 0.5889</code></pre>
+</div>
+<div id="predict-centrality-for-radical-islamist-first-from-exogenous-then-endogenous-parameters" class="section level3">
+<h3><span class="header-section-number">0.3.2</span> Predict centrality for Radical Islamist, first from exogenous then endogenous parameters</h3>
+<pre class="r"><code>raddv2 &lt;- &quot;BetweennessCentrality_log&quot;
+radexovars2 &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log:sumallrhetoric_log)) %&gt;% select(-raddv2)),collapse=&quot; + &quot;)
+do1reg(raddv2, radexovars2, iradmainvars)   </code></pre>
+<pre><code>[1] &quot;BetweennessCentrality_log  ~  MisinformationPerMinute_log + Views_log + VideoLength_log + LikestoDislikes_log + LikesPerView_log + DislikesPerView_log + sumallrhetoric_log&quot;</code></pre>
 <p><img src="figure/youtube.Rmd/regradcent-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradcent-1">
@@ -2031,8 +2642,6 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>topmodels2 &lt;- allradregs2[order(allradregs2$n,-allradregs2$rsquare) , ]
-topmodels2[!duplicated(topmodels2$n),]</code></pre>
 <pre><code># A tibble: 7 x 6
   Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
@@ -2042,15 +2651,29 @@ topmodels2[!duplicated(topmodels2$n),]</code></pre>
 4    64     4 MisinformationPerMi~      0.500           0.388          3.67
 5    99     5 MisinformationPerMi~      0.510           0.366          5.31
 6   120     6 MisinformationPerMi~      0.547           0.378          6.08
-7   127     7 MisinformationPerMi~      0.550           0.340          8   </code></pre>
-<pre class="r"><code>#summarize the &#39;best&#39; model
-radindepvars4 &lt;- paste(unlist(str_split(allradregs2[8,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-radbmFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;, radindepvars4))
-centbestmod &lt;- lm(radbmFormula2, data=iradmainvars)
-summary(centbestmod)</code></pre>
-<pre><code>
+7   127     7 MisinformationPerMi~      0.550           0.340          8   
+
 Call:
-lm(formula = radbmFormula2, data = iradmainvars)
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.0700 -1.1718  0.2342  1.0382  2.0660 
+
+Coefficients:
+                   Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         12.4348     0.6718  18.509 1.03e-15 ***
+sumallrhetoric_log  -1.1005     0.3890  -2.829  0.00927 ** 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.277 on 24 degrees of freedom
+Multiple R-squared:  0.2501,    Adjusted R-squared:  0.2189 
+F-statistic: 8.005 on 1 and 24 DF,  p-value: 0.009274
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
@@ -2067,16 +2690,155 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 Residual standard error: 1.069 on 20 degrees of freedom
   (3 observations deleted due to missingness)
 Multiple R-squared:  0.4195,    Adjusted R-squared:  0.3615 
-F-statistic: 7.227 on 2 and 20 DF,  p-value: 0.004345</code></pre>
-</div>
-<div id="predict-likes-to-dislikes-for-radical-islamist" class="section level3">
-<h3><span class="header-section-number">0.5.3</span> Predict likes to dislikes for Radical Islamist</h3>
-<pre class="r"><code>radindepvars5 &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=&quot; + &quot;)
+F-statistic: 7.227 on 2 and 20 DF,  p-value: 0.004345
 
-allradregFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;,radindepvars5))
-radl2dmod &lt;- lm(allradregFormula3, data=iradmainvars)
-allradregs3 &lt;- ols_step_all_possible(radl2dmod)
-plot(allradregs3)</code></pre>
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.8104 -0.8060  0.2114  0.8589  1.6280 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          7.63276    1.47410   5.178 5.35e-05 ***
+VideoLength_log     -0.26759    0.24268  -1.103  0.28396    
+LikestoDislikes_log -0.06343    0.26094  -0.243  0.81054    
+DislikesPerView_log -0.61390    0.20638  -2.975  0.00779 ** 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.064 on 19 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.4544,    Adjusted R-squared:  0.3683 
+F-statistic: 5.275 on 3 and 19 DF,  p-value: 0.008125
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.7609 -0.5021  0.3607  0.7276  1.2725 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)                   5.2395     1.6114   3.252  0.00443 **
+MisinformationPerMinute_log   0.5086     0.3828   1.329  0.20055   
+LikestoDislikes_log           0.3267     0.3889   0.840  0.41193   
+LikesPerView_log             -0.4232     0.3109  -1.362  0.19014   
+DislikesPerView_log          -0.5248     0.2271  -2.311  0.03290 * 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.047 on 18 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.4996,    Adjusted R-squared:  0.3884 
+F-statistic: 4.493 on 4 and 18 DF,  p-value: 0.01082</code></pre>
+<pre class="r"><code>do1reg(raddv2, radendovars4all, iradmainvars)   </code></pre>
+<pre><code>[1] &quot;BetweennessCentrality_log  ~  AdConsequentiam_det + AdPopulum_det + HastyGeneralisation_det + Polarisation_det + InvokingEmotion_det + Conspiracy_det + CherryPickedData_det + MisrepresentationScripture_det&quot;</code></pre>
+<p><img src="figure/youtube.Rmd/regradcent-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradcent-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code># A tibble: 8 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 Conspiracy_det            0.293           0.263        -0.525
+2     9     2 AdPopulum_det Consp~      0.348           0.291        -0.206
+3    37     3 AdPopulum_det Consp~      0.375           0.290         0.968
+4    93     4 AdConsequentiam_det~      0.395           0.280         2.36 
+5   163     5 AdConsequentiam_det~      0.436           0.296         3.11 
+6   219     6 AdConsequentiam_det~      0.439           0.261         5.04 
+7   247     7 AdConsequentiam_det~      0.439           0.221         7.02 
+8   255     8 AdConsequentiam_det~      0.440           0.177         9    
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.3099 -0.8204  0.1187  1.0250  2.2248 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     11.5031     0.3590  32.041  &lt; 2e-16 ***
+Conspiracy_det  -0.7211     0.2288  -3.151  0.00432 ** 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.24 on 24 degrees of freedom
+Multiple R-squared:  0.2927,    Adjusted R-squared:  0.2632 
+F-statistic: 9.931 on 1 and 24 DF,  p-value: 0.00432
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.26498 -0.75053  0.06939  0.58050  1.85242 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     11.4582     0.3535  32.409  &lt; 2e-16 ***
+AdPopulum_det    0.7463     0.5339   1.398  0.17553    
+Conspiracy_det  -0.7817     0.2286  -3.420  0.00234 ** 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.216 on 23 degrees of freedom
+Multiple R-squared:  0.3481,    Adjusted R-squared:  0.2914 
+F-statistic: 6.139 on 2 and 23 DF,  p-value: 0.007302
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.2596 -0.8172  0.2222  0.7753  1.9926 
+
+Coefficients:
+                               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                     11.7699     0.4761  24.721   &lt;2e-16 ***
+AdPopulum_det                    0.6429     0.5447   1.180   0.2505    
+Conspiracy_det                  -0.7579     0.2300  -3.295   0.0033 ** 
+MisrepresentationScripture_det  -0.1585     0.1620  -0.979   0.3384    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.218 on 22 degrees of freedom
+Multiple R-squared:  0.3752,    Adjusted R-squared:  0.2901 
+F-statistic: 4.405 on 3 and 22 DF,  p-value: 0.01429
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.24173 -0.71664  0.07688  0.84810  2.14900 
+
+Coefficients:
+                               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                     11.9347     0.5183  23.024  &lt; 2e-16 ***
+AdConsequentiam_det              0.4716     0.5641   0.836  0.41255    
+AdPopulum_det                    0.6642     0.5491   1.210  0.23988    
+Conspiracy_det                  -0.8051     0.2384  -3.377  0.00285 ** 
+MisrepresentationScripture_det  -0.2499     0.1963  -1.273  0.21703    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.226 on 21 degrees of freedom
+Multiple R-squared:  0.3954,    Adjusted R-squared:  0.2802 
+F-statistic: 3.433 on 4 and 21 DF,  p-value: 0.02615</code></pre>
+</div>
+<div id="predict-likes-to-dislikes-for-radical-islamist-first-from-exogenous-then-endogenous-parameters" class="section level3">
+<h3><span class="header-section-number">0.3.3</span> Predict likes to dislikes for Radical Islamist, first from exogenous then endogenous parameters</h3>
+<pre class="r"><code>raddv3 &lt;-  &quot;LikestoDislikes_log&quot;
+#note that all like variables are excluded from list of potential predictors
+radexovars3 &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=&quot; + &quot;)
+do1reg(raddv3, radexovars3, iradmainvars)  </code></pre>
+<pre><code>[1] &quot;LikestoDislikes_log  ~  MisinformationPerMinute_log + BetweennessCentrality_log + Views_log + VideoLength_log + sumallrhetoric_log&quot;</code></pre>
 <p><img src="figure/youtube.Rmd/regradl2d-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regradl2d-1">
@@ -2153,8 +2915,6 @@ StephanLewandowsky
 </table>
 </div>
 </div>
-<pre class="r"><code>topmodels3 &lt;- allradregs3[order(allradregs3$n,-allradregs3$rsquare) , ]
-topmodels3[!duplicated(topmodels3$n),]</code></pre>
 <pre><code># A tibble: 5 x 6
   Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
@@ -2162,15 +2922,10 @@ topmodels3[!duplicated(topmodels3$n),]</code></pre>
 2     6     2 MisinformationPerMi~      0.420           0.362        0.0727
 3    16     3 MisinformationPerMi~      0.422           0.331        2.01  
 4    26     4 MisinformationPerMi~      0.422           0.294        4.00  
-5    31     5 MisinformationPerMi~      0.422           0.253        6     </code></pre>
-<pre class="r"><code>#summarize the &#39;best&#39; model
-radindepvars6 &lt;- paste(unlist(str_split(allradregs3[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-radbmFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;, radindepvars6))
-l2dbestmod &lt;- lm(radbmFormula3, data=iradmainvars)
-summary(l2dbestmod)</code></pre>
-<pre><code>
+5    31     5 MisinformationPerMi~      0.422           0.253        6     
+
 Call:
-lm(formula = radbmFormula3, data = iradmainvars)
+lm(formula = bmFormula, data = d4regglobal)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
@@ -2186,11 +2941,174 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 Residual standard error: 0.8226 on 21 degrees of freedom
   (3 observations deleted due to missingness)
 Multiple R-squared:  0.4172,    Adjusted R-squared:  0.3895 
-F-statistic: 15.04 on 1 and 21 DF,  p-value: 0.0008702</code></pre>
+F-statistic: 15.04 on 1 and 21 DF,  p-value: 0.0008702
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.60411 -0.62243  0.07506  0.60137  1.42601 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)                  0.73187    1.03776   0.705  0.48879   
+MisinformationPerMinute_log -0.85288    0.22833  -3.735  0.00131 **
+Views_log                    0.02959    0.09681   0.306  0.76306   
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.841 on 20 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:   0.42, Adjusted R-squared:  0.3619 
+F-statistic:  7.24 on 2 and 20 DF,  p-value: 0.004312
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.58431 -0.66374  0.05595  0.58393  1.43601 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                  0.66291    1.09463   0.606   0.5519  
+MisinformationPerMinute_log -0.77985    0.36297  -2.149   0.0448 *
+Views_log                    0.02651    0.09984   0.266   0.7935  
+VideoLength_log              0.06357    0.24162   0.263   0.7953  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.8613 on 19 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.4221,    Adjusted R-squared:  0.3308 
+F-statistic: 4.625 on 3 and 19 DF,  p-value: 0.01363
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.58920 -0.65934  0.02215  0.57599  1.44009 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)                  0.69648    1.16794   0.596    0.558
+MisinformationPerMinute_log -0.65116    1.26856  -0.513    0.614
+Views_log                    0.02556    0.10293   0.248    0.807
+VideoLength_log              0.18996    1.21652   0.156    0.878
+sumallrhetoric_log          -0.14582    1.37392  -0.106    0.917
+
+Residual standard error: 0.8846 on 18 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.4224,    Adjusted R-squared:  0.2941 
+F-statistic: 3.291 on 4 and 18 DF,  p-value: 0.03435</code></pre>
+<pre class="r"><code>do1reg(raddv3, radendovars4all, iradmainvars)   </code></pre>
+<pre><code>[1] &quot;LikestoDislikes_log  ~  AdConsequentiam_det + AdPopulum_det + HastyGeneralisation_det + Polarisation_det + InvokingEmotion_det + Conspiracy_det + CherryPickedData_det + MisrepresentationScripture_det&quot;</code></pre>
+<p><img src="figure/youtube.Rmd/regradl2d-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradl2d-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code># A tibble: 8 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 Conspiracy_det           0.0384        -0.00744        -2.55 
+2     9     2 HastyGeneralisation~     0.110          0.0210         -1.77 
+3    37     3 AdConsequentiam_det~     0.141          0.00515        -0.301
+4    93     4 AdConsequentiam_det~     0.162         -0.0238          1.33 
+5   163     5 AdConsequentiam_det~     0.170         -0.0746          3.21 
+6   219     6 AdConsequentiam_det~     0.176         -0.133           5.10 
+7   247     7 AdConsequentiam_det~     0.180         -0.203           7.03 
+8   255     8 AdConsequentiam_det~     0.182         -0.286           9    
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.5955 -0.5850  0.1487  0.7625  1.3702 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)      1.1919     0.3224   3.697  0.00134 **
+Conspiracy_det   0.1981     0.2165   0.915  0.37047   
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.057 on 21 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.03836,   Adjusted R-squared:  -0.007435 
+F-statistic: 0.8376 on 1 and 21 DF,  p-value: 0.3705
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.6599 -0.6325  0.2943  0.6212  1.3058 
+
+Coefficients:
+                        Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)               1.2563     0.2578   4.874 9.19e-05 ***
+HastyGeneralisation_det   0.2377     0.1693   1.404    0.176    
+CherryPickedData_det     -1.5211     1.1971  -1.271    0.218    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.042 on 20 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:   0.11, Adjusted R-squared:  0.02105 
+F-statistic: 1.237 on 2 and 20 DF,  p-value: 0.3117
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.2891 -0.6318  0.2641  0.6813  1.6507 
+
+Coefficients:
+                        Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)               0.8855     0.4772   1.856   0.0791 .
+AdConsequentiam_det      -0.7278     0.5047  -1.442   0.1656  
+HastyGeneralisation_det   0.2322     0.1843   1.260   0.2229  
+InvokingEmotion_det       0.2788     0.2927   0.952   0.3528  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.05 on 19 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.1408,    Adjusted R-squared:  0.005147 
+F-statistic: 1.038 on 3 and 19 DF,  p-value: 0.3983
+
+
+Call:
+lm(formula = bmFormula, data = d4regglobal)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.2837 -0.6368  0.1202  0.6922  1.6561 
+
+Coefficients:
+                        Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)               0.8801     0.4841   1.818   0.0858 .
+AdConsequentiam_det      -0.4892     0.6206  -0.788   0.4408  
+HastyGeneralisation_det   0.2481     0.1884   1.317   0.2044  
+InvokingEmotion_det       0.2752     0.2970   0.927   0.3664  
+CherryPickedData_det     -1.0331     1.5183  -0.680   0.5049  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.065 on 18 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.1624,    Adjusted R-squared:  -0.02379 
+F-statistic: 0.8722 on 4 and 18 DF,  p-value: 0.4997</code></pre>
 </div>
 </div>
 <div id="compare-radicalism-to-islamophobia" class="section level2">
-<h2><span class="header-section-number">0.6</span> Compare radicalism to Islamophobia</h2>
+<h2><span class="header-section-number">0.4</span> Compare radicalism to Islamophobia</h2>
 <pre class="r"><code>#plot violins side by side
 plotvn &lt;- c(&quot;Misinfo/Min&quot;, &quot;Centrality&quot;,   &quot;Views&quot;    , &quot;VidLength&quot;,  &quot;Like2Dislike&quot;,   &quot;Likes/View&quot;,  &quot;Dislikes/View&quot;, &quot;SumRhetoric&quot; )
 x11(width=20,height=10)
@@ -2199,6 +3117,43 @@ vioplot(iradmainvars %&gt;% select(contains(&quot;_log&quot;)), col = &quot;dark
 title(xlab=&quot;Variable&quot;,ylab=&quot;Measure (log transformed)&quot;)
 legend(7,12, fill = c(&quot;brown&quot;, &quot;darkgreen&quot;), legend = c(&quot;Islamophobic&quot;, &quot;Islamist&quot;), title = &quot;Type of video&quot;)</code></pre>
 <p><img src="figure/youtube.Rmd/compr2p-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-compr2p-1">
+Past versions of compr2p-1.png
+</button>
+</p>
+<div id="fig-compr2p-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/a33aac005a93ae96def7c8255f417f42e43f15ea/docs/figure/youtube.Rmd/compr2p-1.png" target="_blank">a33aac0</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#combined data set in case statistics are wanted
 phorad &lt;- bind_rows(iphob,irad,.id=&quot;radorphob&quot;)</code></pre>
 <br>
