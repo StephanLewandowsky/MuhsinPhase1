@@ -594,10 +594,10 @@ environment
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree0137833d763c170c626f9ed7839ee700adae632ftargetblank0137833a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/0137833d763c170c626f9ed7839ee700adae632f" target="_blank">0137833</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1treeef60d8003b22744dffcd31a45ea20d04ddc381d8targetblankef60d80a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/ef60d8003b22744dffcd31a45ea20d04ddc381d8" target="_blank">ef60d80</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree0137833d763c170c626f9ed7839ee700adae632ftargetblank0137833a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1treeef60d8003b22744dffcd31a45ea20d04ddc381d8targetblankef60d80a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -606,7 +606,6 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    docs/figure/
 
 Untracked files:
     Untracked:  data/IslamophobiaSPSSDATA.sav
@@ -649,6 +648,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/ef60d8003b22744dffcd31a45ea20d04ddc381d8/analysis/youtube.Rmd" target="_blank">ef60d80</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+wflow_publish(c(“analysis/index.Rmd”, “analysis/youtube.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/StephanLewandowsky/MuhsinPhase1/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/youtube.html" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -939,6 +972,43 @@ Table: Table continues below
         Pct.Valid   100.00   100.00     100.00        100.00       100.00   100.00</code></pre>
 <pre class="r"><code>tableplot(iphob)</code></pre>
 <p><img src="figure/youtube.Rmd/summary-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-summary-1">
+Past versions of summary-1.png
+</button>
+</p>
+<div id="fig-summary-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/summary-1.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>temp1 &lt;- iphob %&gt;% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
                             Views,VideoLength,LikestoDislikes,LikesPerView,DislikesPerView,
                             AdConsequentiam, AdHomien, AdPopulum, FalseCause, HastyGeneralisations,
@@ -956,6 +1026,43 @@ iphomainvars &lt;- data.frame(temp1,
                                      rename_all( ~paste0(., &quot;_log&quot;) ))
 multi.hist(iphomainvars%&gt;%select(contains(&quot;log&quot;)))</code></pre>
 <p><img src="figure/youtube.Rmd/summary-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-summary-2">
+Past versions of summary-2.png
+</button>
+</p>
+<div id="fig-summary-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/summary-2.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#corrplot...
 RM  &lt;- cor(iphomainvars%&gt;%select(contains(&quot;log&quot;)))
 RM2 &lt;- cor.mtest(iphomainvars%&gt;%select(contains(&quot;log&quot;)), conf.level = .95)
@@ -969,16 +1076,131 @@ corrplot.mixed(RM, lower.col = &quot;black&quot;, number.cex = 1.2,insig = &quot
                    tl.pos=&quot;lt&quot;,tl.col=&quot;black&quot;,na.label = &quot;.&quot;,bg=&quot;lightgray&quot;,
                    tl.cex=1.5,tl.srt=60)</code></pre>
 <p><img src="figure/youtube.Rmd/summary-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-summary-3">
+Past versions of summary-3.png
+</button>
+</p>
+<div id="fig-summary-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/summary-3.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#dev.print(pdf,paste(figdir,&quot;cormat.pdf&quot;,sep=&quot;/&quot;))</code></pre>
+</div>
+<div id="predict-various-outcomes-for-islamophobia" class="section level2">
+<h2><span class="header-section-number">0.3</span> Predict various outcomes for Islamophobia</h2>
 <div id="predict-views-for-islamophobia" class="section level3">
-<h3><span class="header-section-number">0.2.1</span> Predict views for Islamophobia</h3>
+<h3><span class="header-section-number">0.3.1</span> Predict views for Islamophobia</h3>
 <pre class="r"><code>depvars &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-Views_log)),collapse=&quot; + &quot;)
 
 allregFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;,depvars))
 viewmod &lt;- lm(allregFormula, data=iphomainvars)
 allregs &lt;- ols_step_all_possible(viewmod)
 plot(allregs)</code></pre>
-<p><img src="figure/youtube.Rmd/regphobviews-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regphobviews-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/youtube.Rmd/regphobviews-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobviews-1">
+Past versions of regphobviews-1.png
+</button>
+</p>
+<div id="fig-regphobviews-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/regphobviews-1.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/youtube.Rmd/regphobviews-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobviews-2">
+Past versions of regphobviews-2.png
+</button>
+</p>
+<div id="fig-regphobviews-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/regphobviews-2.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>topmodels &lt;- allregs[order(allregs$n,-allregs$rsquare) , ]
 topmodels[!duplicated(topmodels$n),]</code></pre>
 <pre><code># A tibble: 7 x 6
@@ -1017,14 +1239,89 @@ Multiple R-squared:  0.1087,    Adjusted R-squared:  0.08971
 F-statistic:  5.73 on 1 and 47 DF,  p-value: 0.02072</code></pre>
 </div>
 <div id="predict-centrality-for-islamophobia" class="section level3">
-<h3><span class="header-section-number">0.2.2</span> Predict centrality for Islamophobia</h3>
+<h3><span class="header-section-number">0.3.2</span> Predict centrality for Islamophobia</h3>
 <pre class="r"><code>depvars3 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-BetweennessCentrality_log)),collapse=&quot; + &quot;)
 
 allregFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;,depvars3))
 centmod &lt;- lm(allregFormula2, data=iphomainvars)
 allregs2 &lt;- ols_step_all_possible(centmod)
 plot(allregs2)</code></pre>
-<p><img src="figure/youtube.Rmd/regphobcent-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regphobcent-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/youtube.Rmd/regphobcent-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobcent-1">
+Past versions of regphobcent-1.png
+</button>
+</p>
+<div id="fig-regphobcent-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/regphobcent-1.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/youtube.Rmd/regphobcent-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobcent-2">
+Past versions of regphobcent-2.png
+</button>
+</p>
+<div id="fig-regphobcent-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/regphobcent-2.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>topmodels2 &lt;- allregs2[order(allregs2$n,-allregs2$rsquare) , ]
 topmodels2[!duplicated(topmodels2$n),]</code></pre>
 <pre><code># A tibble: 7 x 6
@@ -1065,14 +1362,89 @@ Multiple R-squared:  0.08927,   Adjusted R-squared:  0.02855
 F-statistic:  1.47 on 3 and 45 DF,  p-value: 0.2353</code></pre>
 </div>
 <div id="predict-likes-to-dislikes-for-islamophobia" class="section level3">
-<h3><span class="header-section-number">0.2.3</span> Predict likes to dislikes for Islamophobia</h3>
+<h3><span class="header-section-number">0.3.3</span> Predict likes to dislikes for Islamophobia</h3>
 <pre class="r"><code>depvars5 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=&quot; + &quot;)
 
 allregFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;,depvars5))
 l2dmod &lt;- lm(allregFormula3, data=iphomainvars)
 allregs3 &lt;- ols_step_all_possible(l2dmod)
 plot(allregs3)</code></pre>
-<p><img src="figure/youtube.Rmd/regphobl2d-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regphobl2d-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/youtube.Rmd/regphobl2d-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobl2d-1">
+Past versions of regphobl2d-1.png
+</button>
+</p>
+<div id="fig-regphobl2d-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/regphobl2d-1.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/youtube.Rmd/regphobl2d-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-regphobl2d-2">
+Past versions of regphobl2d-2.png
+</button>
+</p>
+<div id="fig-regphobl2d-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/73cc8880f4b84b22e1cc4cb57f4127bab012ba3b/docs/figure/youtube.Rmd/regphobl2d-2.png" target="_blank">73cc888</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>topmodels3 &lt;- allregs3[order(allregs3$n,-allregs3$rsquare) , ]
 topmodels3[!duplicated(topmodels3$n),]</code></pre>
 <pre><code># A tibble: 5 x 6
