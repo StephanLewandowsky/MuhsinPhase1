@@ -23,7 +23,6 @@ library(lattice)
 library(ggplot2)
 library(tabplot)
 library(tidyverse)
-
 library(lme4)
 library(RColorBrewer)
 library(gridExtra)
@@ -37,6 +36,7 @@ library(foreign) #for SPSS
 library(workflowr)
 library(olsrr)
 library(corrplot)
+library(vioplot)
 
 #define working directories
 inputdir <- "data"
@@ -251,4 +251,22 @@ l2dbestmod <- lm(radbmFormula3, data=iradmainvars)
 summary(l2dbestmod)
 
 ```
+
+## Compare radicalism to Islamophobia
+```{r compr2p, echo=TRUE, warning=FALSE, message=FALSE}
+#plot violins side by side
+plotvn <- c("Misinfo/Min", "Centrality",   "Views"    , "VidLength",  "Like2Dislike",   "Likes/View",  "Dislikes/View", "SumRhetoric" )
+x11(width=20,height=10)
+vioplot(iphomainvars %>% select(contains("_log")), col = "brown", plotCentre = "line", side = "right",las=1,names=plotvn)
+vioplot(iradmainvars %>% select(contains("_log")), col = "darkgreen", plotCentre = "line", side = "left", add = T)
+title(xlab="Variable",ylab="Measure (log transformed)")
+legend(7,12, fill = c("brown", "darkgreen"), legend = c("Islamophobic", "Islamist"), title = "Type of video")
+
+#combined data set in case statistics are wanted
+phorad <- bind_rows(iphob,irad,.id="radorphob")
+
+
+
+```
+
 
