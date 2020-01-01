@@ -43,6 +43,7 @@ inputdir <- "data"
 
 iphob <- read.spss(paste(inputdir,"IslamophobiaSPSSDATA.sav",sep="/"), use.value.labels = TRUE, to.data.frame = TRUE)
 irad <-  read.spss(paste(inputdir,"RadicalisationSPSS.sav",sep="/"), use.value.labels = TRUE, to.data.frame = TRUE)
+irad <- irad[!rowSums(is.na(irad))==dim(irad)[2], ]
 ```
 
 ## Summary statistics for Islamophobia
@@ -89,9 +90,9 @@ corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
 ### Predict views for Islamophobia
 ```{r regphobviews, echo=TRUE, warning=FALSE, message=FALSE}
 
-depvars <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-Views_log)),collapse=" + ")
+indepvars <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-Views_log)),collapse=" + ")
 
-allregFormula <- as.formula(paste("Views_log ~ ",depvars))
+allregFormula <- as.formula(paste("Views_log ~ ",indepvars))
 viewmod <- lm(allregFormula, data=iphomainvars)
 allregs <- ols_step_all_possible(viewmod)
 plot(allregs)
@@ -100,8 +101,8 @@ topmodels <- allregs[order(allregs$n,-allregs$rsquare) , ]
 topmodels[!duplicated(topmodels$n),]
 
 #summarize the 'best' model (3 predictors, model 29)
-depvars2 <- paste(unlist(str_split(allregs[1,]$predictors," ")),collapse=" + ")
-bmFormula <- as.formula(paste("Views_log ~ ", depvars2))
+indepvars2 <- paste(unlist(str_split(allregs[1,]$predictors," ")),collapse=" + ")
+bmFormula <- as.formula(paste("Views_log ~ ", indepvars2))
 viewbestmod <- lm(bmFormula, data=iphomainvars)
 summary(viewbestmod)
 
@@ -110,9 +111,9 @@ summary(viewbestmod)
 ### Predict centrality for Islamophobia
 ```{r regphobcent, echo=TRUE, warning=FALSE, message=FALSE}
 
-depvars3 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-BetweennessCentrality_log)),collapse=" + ")
+indepvars3 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-BetweennessCentrality_log)),collapse=" + ")
 
-allregFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ",depvars3))
+allregFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ",indepvars3))
 centmod <- lm(allregFormula2, data=iphomainvars)
 allregs2 <- ols_step_all_possible(centmod)
 plot(allregs2)
@@ -121,8 +122,8 @@ topmodels2 <- allregs2[order(allregs2$n,-allregs2$rsquare) , ]
 topmodels2[!duplicated(topmodels2$n),]
 
 #summarize the 'best' model
-depvars4 <- paste(unlist(str_split(allregs2[29,]$predictors," ")),collapse=" + ")
-bmFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ", depvars4))
+indepvars4 <- paste(unlist(str_split(allregs2[29,]$predictors," ")),collapse=" + ")
+bmFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ", indepvars4))
 centbestmod <- lm(bmFormula2, data=iphomainvars)
 summary(centbestmod)
 
@@ -131,9 +132,9 @@ summary(centbestmod)
 ### Predict likes to dislikes for Islamophobia
 ```{r regphobl2d, echo=TRUE, warning=FALSE, message=FALSE}
 
-depvars5 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=" + ")
+indepvars5 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=" + ")
 
-allregFormula3 <- as.formula(paste("LikestoDislikes_log ~ ",depvars5))
+allregFormula3 <- as.formula(paste("LikestoDislikes_log ~ ",indepvars5))
 l2dmod <- lm(allregFormula3, data=iphomainvars)
 allregs3 <- ols_step_all_possible(l2dmod)
 plot(allregs3)
@@ -142,9 +143,111 @@ topmodels3 <- allregs3[order(allregs3$n,-allregs3$rsquare) , ]
 topmodels3[!duplicated(topmodels3$n),]
 
 #summarize the 'best' model
-depvars6 <- paste(unlist(str_split(allregs3[1,]$predictors," ")),collapse=" + ")
-bmFormula3 <- as.formula(paste("LikestoDislikes_log ~ ", depvars6))
+indepvars6 <- paste(unlist(str_split(allregs3[1,]$predictors," ")),collapse=" + ")
+bmFormula3 <- as.formula(paste("LikestoDislikes_log ~ ", indepvars6))
 l2dbestmod <- lm(bmFormula3, data=iphomainvars)
+summary(l2dbestmod)
+
+```
+
+
+## Summary statistics for Radical Islamist
+```{r radsummary, echo=TRUE, warning=FALSE, message=FALSE}
+descr(irad)
+tableplot(irad)
+
+temp1 <- irad %>% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
+                            Views,VideoLength,LikesPerView,DislikesPerView,
+                            AdConsequentiam, AdHomien, AdPopulum, FalseCause, 
+                            Polarisation, InvokingEmotion, Conspiracy, Trolling, DeflectingBlame,
+                            MisrepresentationScripture, CherryPickedData)) 
+temp1$LikestoDislikes <- irad$Likes/irad$Dislikes
+temp1$LikestoDislikes[temp1$LikestoDislikes==Inf] <- NA
+temp1$sumallrhetoric <- temp1 %>% select(AdConsequentiam:CherryPickedData) %>% apply(.,1,sum)
+
+iradmainvars <- data.frame(temp1,
+                           temp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
+                                              VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %>% 
+                                     mutate_all(~ log(. + .0001)) %>%
+                                     rename_all( ~paste0(., "_log") ))
+multi.hist(iradmainvars%>%select(contains("log")))
+
+
+#corrplot...
+RM  <- cor(iradmainvars%>%select(contains("log")))
+RM2 <- cor.mtest(iradmainvars%>%select(contains("log")), conf.level = .95)
+diag(RM)<-NA
+
+x11(width=11,height=10)
+corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
+                   upper="ellipse",p.mat = RM2$p,sig.level=.05,
+                   tl.pos="lt",tl.col="black",na.label = ".",bg="lightgray",
+                   tl.cex=1.5,tl.srt=60)
+#dev.print(pdf,paste(figdir,"cormat.pdf",sep="/"))
+
+
+```
+## Predict various outcomes for Radical Islamist
+
+### Predict views for Radical Islamist
+```{r regradviews, echo=TRUE, warning=FALSE, message=FALSE}
+
+radindepvars <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log: LikestoDislikes_log,sumallrhetoric_log)) %>% select(-Views_log)),collapse=" + ")
+
+allradregFormula <- as.formula(paste("Views_log ~ ",radindepvars))
+viewmod <- lm(allradregFormula, data=iradmainvars, na.action=na.omit)
+allradregs <- ols_step_all_possible(viewmod)
+plot(allradregs)
+
+topmodels <- allradregs[order(allradregs$n,-allradregs$rsquare) , ]
+topmodels[!duplicated(topmodels$n),]
+
+#summarize the 'best' model 
+radindepvars2 <- paste(unlist(str_split(allradregs[6,]$predictors," ")),collapse=" + ")
+radbmFormula <- as.formula(paste("Views_log ~ ", radindepvars2))
+viewbestmod <- lm(radbmFormula, data=iradmainvars)
+summary(viewbestmod)
+
+```
+
+### Predict centrality for Radical Islamist
+```{r regradcent, echo=TRUE, warning=FALSE, message=FALSE}
+
+radindepvars3 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-BetweennessCentrality_log)),collapse=" + ")
+
+allradregFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ",radindepvars3))
+centmod <- lm(allradregFormula2, data=iradmainvars)
+allradregs2 <- ols_step_all_possible(centmod)
+plot(allradregs2)
+
+topmodels2 <- allradregs2[order(allradregs2$n,-allradregs2$rsquare) , ]
+topmodels2[!duplicated(topmodels2$n),]
+
+#summarize the 'best' model
+radindepvars4 <- paste(unlist(str_split(allradregs2[8,]$predictors," ")),collapse=" + ")
+radbmFormula2 <- as.formula(paste("BetweennessCentrality_log ~ ", radindepvars4))
+centbestmod <- lm(radbmFormula2, data=iradmainvars)
+summary(centbestmod)
+
+```
+
+### Predict likes to dislikes for Radical Islamist
+```{r regradl2d, echo=TRUE, warning=FALSE, message=FALSE}
+
+radindepvars5 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=" + ")
+
+allradregFormula3 <- as.formula(paste("LikestoDislikes_log ~ ",radindepvars5))
+radl2dmod <- lm(allradregFormula3, data=iradmainvars)
+allradregs3 <- ols_step_all_possible(radl2dmod)
+plot(allradregs3)
+
+topmodels3 <- allradregs3[order(allradregs3$n,-allradregs3$rsquare) , ]
+topmodels3[!duplicated(topmodels3$n),]
+
+#summarize the 'best' model
+radindepvars6 <- paste(unlist(str_split(allradregs3[1,]$predictors," ")),collapse=" + ")
+radbmFormula3 <- as.formula(paste("LikestoDislikes_log ~ ", radindepvars6))
+l2dbestmod <- lm(radbmFormula3, data=iradmainvars)
 summary(l2dbestmod)
 
 ```
