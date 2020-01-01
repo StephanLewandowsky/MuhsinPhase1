@@ -594,10 +594,10 @@ environment
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1treeef60d8003b22744dffcd31a45ea20d04ddc381d8targetblankef60d80a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/ef60d8003b22744dffcd31a45ea20d04ddc381d8" target="_blank">ef60d80</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree7007bab648f6f8e64c7ad2abdc1aa379b4e9c2a8targetblank7007baba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/StephanLewandowsky/MuhsinPhase1/tree/7007bab648f6f8e64c7ad2abdc1aa379b4e9c2a8" target="_blank">7007bab</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1treeef60d8003b22744dffcd31a45ea20d04ddc381d8targetblankef60d80a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomStephanLewandowskyMuhsinPhase1tree7007bab648f6f8e64c7ad2abdc1aa379b4e9c2a8targetblank7007baba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -648,6 +648,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/StephanLewandowsky/MuhsinPhase1/blob/7007bab648f6f8e64c7ad2abdc1aa379b4e9c2a8/analysis/youtube.Rmd" target="_blank">7007bab</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+wflow_publish(c(“analysis/index.Rmd”, “analysis/youtube.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/StephanLewandowsky/MuhsinPhase1/de51058bc3799bb9d546875ba58ab70803a7662e/docs/youtube.html" target="_blank">de51058</a>
+</td>
+<td>
+StephanLewandowsky
+</td>
+<td>
+2020-01-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -834,7 +868,8 @@ library(corrplot)
 inputdir &lt;- &quot;data&quot;
 
 iphob &lt;- read.spss(paste(inputdir,&quot;IslamophobiaSPSSDATA.sav&quot;,sep=&quot;/&quot;), use.value.labels = TRUE, to.data.frame = TRUE)
-irad &lt;-  read.spss(paste(inputdir,&quot;RadicalisationSPSS.sav&quot;,sep=&quot;/&quot;), use.value.labels = TRUE, to.data.frame = TRUE)</code></pre>
+irad &lt;-  read.spss(paste(inputdir,&quot;RadicalisationSPSS.sav&quot;,sep=&quot;/&quot;), use.value.labels = TRUE, to.data.frame = TRUE)
+irad &lt;- irad[!rowSums(is.na(irad))==dim(irad)[2], ]</code></pre>
 </div>
 <div id="summary-statistics-for-islamophobia" class="section level2">
 <h2><span class="header-section-number">0.2</span> Summary statistics for Islamophobia</h2>
@@ -1119,9 +1154,9 @@ StephanLewandowsky
 <h2><span class="header-section-number">0.3</span> Predict various outcomes for Islamophobia</h2>
 <div id="predict-views-for-islamophobia" class="section level3">
 <h3><span class="header-section-number">0.3.1</span> Predict views for Islamophobia</h3>
-<pre class="r"><code>depvars &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-Views_log)),collapse=&quot; + &quot;)
+<pre class="r"><code>indepvars &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-Views_log)),collapse=&quot; + &quot;)
 
-allregFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;,depvars))
+allregFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;,indepvars))
 viewmod &lt;- lm(allregFormula, data=iphomainvars)
 allregs &lt;- ols_step_all_possible(viewmod)
 plot(allregs)</code></pre>
@@ -1214,8 +1249,8 @@ topmodels[!duplicated(topmodels$n),]</code></pre>
 6   120     6 MisinformationPerMi~      0.191          0.0759         6.27 
 7   127     7 MisinformationPerMi~      0.197          0.0595         8.   </code></pre>
 <pre class="r"><code>#summarize the &#39;best&#39; model (3 predictors, model 29)
-depvars2 &lt;- paste(unlist(str_split(allregs[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-bmFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;, depvars2))
+indepvars2 &lt;- paste(unlist(str_split(allregs[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+bmFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;, indepvars2))
 viewbestmod &lt;- lm(bmFormula, data=iphomainvars)
 summary(viewbestmod)</code></pre>
 <pre><code>
@@ -1240,9 +1275,9 @@ F-statistic:  5.73 on 1 and 47 DF,  p-value: 0.02072</code></pre>
 </div>
 <div id="predict-centrality-for-islamophobia" class="section level3">
 <h3><span class="header-section-number">0.3.2</span> Predict centrality for Islamophobia</h3>
-<pre class="r"><code>depvars3 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-BetweennessCentrality_log)),collapse=&quot; + &quot;)
+<pre class="r"><code>indepvars3 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-BetweennessCentrality_log)),collapse=&quot; + &quot;)
 
-allregFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;,depvars3))
+allregFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;,indepvars3))
 centmod &lt;- lm(allregFormula2, data=iphomainvars)
 allregs2 &lt;- ols_step_all_possible(centmod)
 plot(allregs2)</code></pre>
@@ -1335,8 +1370,8 @@ topmodels2[!duplicated(topmodels2$n),]</code></pre>
 6   120     6 MisinformationPerMi~     0.119         -0.00721         6.00 
 7   127     7 MisinformationPerMi~     0.119         -0.0318          8    </code></pre>
 <pre class="r"><code>#summarize the &#39;best&#39; model
-depvars4 &lt;- paste(unlist(str_split(allregs2[29,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-bmFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;, depvars4))
+indepvars4 &lt;- paste(unlist(str_split(allregs2[29,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+bmFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;, indepvars4))
 centbestmod &lt;- lm(bmFormula2, data=iphomainvars)
 summary(centbestmod)</code></pre>
 <pre><code>
@@ -1363,9 +1398,9 @@ F-statistic:  1.47 on 3 and 45 DF,  p-value: 0.2353</code></pre>
 </div>
 <div id="predict-likes-to-dislikes-for-islamophobia" class="section level3">
 <h3><span class="header-section-number">0.3.3</span> Predict likes to dislikes for Islamophobia</h3>
-<pre class="r"><code>depvars5 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=&quot; + &quot;)
+<pre class="r"><code>indepvars5 &lt;- paste(names(iphomainvars %&gt;% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=&quot; + &quot;)
 
-allregFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;,depvars5))
+allregFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;,indepvars5))
 l2dmod &lt;- lm(allregFormula3, data=iphomainvars)
 allregs3 &lt;- ols_step_all_possible(l2dmod)
 plot(allregs3)</code></pre>
@@ -1456,8 +1491,8 @@ topmodels3[!duplicated(topmodels3$n),]</code></pre>
 4    26     4 MisinformationPerMi~     0.0554        -0.0305          4.11 
 5    31     5 MisinformationPerMi~     0.0577        -0.0519          6    </code></pre>
 <pre class="r"><code>#summarize the &#39;best&#39; model
-depvars6 &lt;- paste(unlist(str_split(allregs3[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
-bmFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;, depvars6))
+indepvars6 &lt;- paste(unlist(str_split(allregs3[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+bmFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;, indepvars6))
 l2dbestmod &lt;- lm(bmFormula3, data=iphomainvars)
 summary(l2dbestmod)</code></pre>
 <pre><code>
@@ -1479,6 +1514,309 @@ Residual standard error: 1.355 on 47 degrees of freedom
   (1 observation deleted due to missingness)
 Multiple R-squared:  0.04151,   Adjusted R-squared:  0.02112 
 F-statistic: 2.036 on 1 and 47 DF,  p-value: 0.1603</code></pre>
+</div>
+</div>
+<div id="summary-statistics-for-radical-islamist" class="section level2">
+<h2><span class="header-section-number">0.4</span> Summary statistics for Radical Islamist</h2>
+<pre class="r"><code>descr(irad)</code></pre>
+<pre><code>Descriptive Statistics  
+irad  
+N: 26  
+
+                    AdConsequentiam   AdHomien   AdPopulum   BetweennessCentrality
+----------------- ----------------- ---------- ----------- -----------------------
+             Mean              0.15       0.00        0.15                96055.20
+          Std.Dev              0.54       0.00        0.46               107384.63
+              Min              0.00       0.00        0.00                 3217.65
+               Q1              0.00       0.00        0.00                12602.89
+           Median              0.00       0.00        0.00                37690.03
+               Q3              0.00       0.00        0.00               160490.37
+              Max              2.00       0.00        2.00               357937.77
+              MAD              0.00       0.00        0.00                50893.25
+              IQR              0.00       0.00        0.00               142638.91
+               CV              3.53        NaN        3.02                    1.12
+         Skewness              2.99        NaN        2.86                    1.12
+      SE.Skewness              0.46       0.46        0.46                    0.46
+         Kurtosis              7.25        NaN        7.49                    0.14
+          N.Valid             26.00      26.00       26.00                   26.00
+        Pct.Valid            100.00     100.00      100.00                  100.00
+
+Table: Table continues below
+
+ 
+
+                    CherryPickedData   Conspiracy   DeflectingBlame   Dislikes   DislikesPerView
+----------------- ------------------ ------------ ----------------- ---------- -----------------
+             Mean               0.04         1.15              0.00     233.72              0.00
+          Std.Dev               0.20         1.08              0.00     424.05              0.00
+              Min               0.00         0.00              0.00       0.00              0.00
+               Q1               0.00         0.00              0.00      27.00              0.00
+           Median               0.00         1.00              0.00      62.00              0.00
+               Q3               0.00         2.00              0.00     159.00              0.00
+              Max               1.00         3.00              0.00    1600.00              0.02
+              MAD               0.00         1.48              0.00      81.54              0.00
+              IQR               0.00         2.00              0.00     132.00              0.00
+               CV               5.10         0.94               NaN       1.81              1.39
+         Skewness               4.53         0.25               NaN       2.15              1.90
+      SE.Skewness               0.46         0.46              0.46       0.46              0.46
+         Kurtosis              19.23        -1.42               NaN       3.37              2.72
+          N.Valid              26.00        26.00             26.00      25.00             26.00
+        Pct.Valid             100.00       100.00            100.00      96.15            100.00
+
+Table: Table continues below
+
+ 
+
+                    FakeAccounts   FalseCause   HastyGeneralisation   InvokingEmotion     Likes
+----------------- -------------- ------------ --------------------- ----------------- ---------
+             Mean           0.00         0.08                  1.04              1.50   1144.32
+          Std.Dev           0.00         0.39                  1.43              0.91   2076.29
+              Min           0.00         0.00                  0.00              0.00      9.00
+               Q1           0.00         0.00                  0.00              1.00     33.00
+           Median           0.00         0.00                  0.00              2.00    270.00
+               Q3           0.00         0.00                  2.00              2.00    935.00
+              Max           0.00         2.00                  4.00              3.00   9400.00
+              MAD           0.00         0.00                  0.00              1.48    379.55
+              IQR           0.00         0.00                  2.00              1.00    902.00
+               CV            NaN         5.10                  1.37              0.60      1.81
+         Skewness            NaN         4.53                  0.81             -0.16      2.67
+      SE.Skewness           0.46         0.46                  0.46              0.46      0.46
+         Kurtosis            NaN        19.23                 -0.95             -0.91      7.35
+          N.Valid          26.00        26.00                 26.00             26.00     25.00
+        Pct.Valid         100.00       100.00                100.00            100.00     96.15
+
+Table: Table continues below
+
+ 
+
+                    LikesPerView   MisinformationPerMinute   MisrepresentationScripture   Modularity
+----------------- -------------- ------------------------- ---------------------------- ------------
+             Mean           0.01                      0.93                         2.04        16.00
+          Std.Dev           0.02                      0.69                         1.54        13.37
+              Min           0.00                      0.16                         0.00         0.00
+               Q1           0.00                      0.36                         1.00         1.00
+           Median           0.01                      0.74                         2.00        17.50
+               Q3           0.01                      1.21                         3.00        29.00
+              Max           0.09                      2.60                         5.00        29.00
+              MAD           0.01                      0.59                         1.48        17.05
+              IQR           0.01                      0.80                         2.00        28.00
+               CV           1.50                      0.74                         0.75         0.84
+         Skewness           2.49                      1.00                         0.32        -0.08
+      SE.Skewness           0.46                      0.46                         0.46         0.46
+         Kurtosis           5.57                      0.00                        -0.64        -1.98
+          N.Valid          26.00                     26.00                        26.00        26.00
+        Pct.Valid         100.00                    100.00                       100.00       100.00
+
+Table: Table continues below
+
+ 
+
+                       one   Polarisation    seven   Trolling   twentyeight   twentynine
+----------------- -------- -------------- -------- ---------- ------------- ------------
+             Mean     0.19           0.85     0.19       0.00          0.04         0.46
+          Std.Dev     0.40           1.05     0.40       0.00          0.20         0.51
+              Min     0.00           0.00     0.00       0.00          0.00         0.00
+               Q1     0.00           0.00     0.00       0.00          0.00         0.00
+           Median     0.00           0.00     0.00       0.00          0.00         0.00
+               Q3     0.00           2.00     0.00       0.00          0.00         1.00
+              Max     1.00           3.00     1.00       0.00          1.00         1.00
+              MAD     0.00           0.00     0.00       0.00          0.00         0.00
+              IQR     0.00           2.00     0.00       0.00          0.00         1.00
+               CV     2.09           1.24     2.09        NaN          5.10         1.10
+         Skewness     1.47           0.70     1.47        NaN          4.53         0.15
+      SE.Skewness     0.46           0.46     0.46       0.46          0.46         0.46
+         Kurtosis     0.18          -1.05     0.18        NaN         19.23        -2.05
+          N.Valid    26.00          26.00    26.00      26.00         26.00        26.00
+        Pct.Valid   100.00         100.00   100.00     100.00        100.00       100.00
+
+Table: Table continues below
+
+ 
+
+                    VideoLength        Views     zero
+----------------- ------------- ------------ --------
+             Mean         14.83    159020.96     0.12
+          Std.Dev         18.10    315414.26     0.33
+              Min          1.15      1000.00     0.00
+               Q1          3.30      5950.00     0.00
+           Median          7.63     35990.00     0.00
+               Q3         12.05    129746.00     0.00
+              Max         56.31   1284704.00     1.00
+              MAD          6.49     50969.56     0.00
+              IQR          8.23    116468.50     0.00
+               CV          1.22         1.98     2.82
+         Skewness          1.36         2.59     2.27
+      SE.Skewness          0.46         0.46     0.46
+         Kurtosis          0.11         5.75     3.28
+          N.Valid         26.00        26.00    26.00
+        Pct.Valid        100.00       100.00   100.00</code></pre>
+<pre class="r"><code>tableplot(irad)</code></pre>
+<p><img src="figure/youtube.Rmd/radsummary-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>temp1 &lt;- irad %&gt;% select(c(Modularity,MisinformationPerMinute,BetweennessCentrality,
+                            Views,VideoLength,LikesPerView,DislikesPerView,
+                            AdConsequentiam, AdHomien, AdPopulum, FalseCause, 
+                            Polarisation, InvokingEmotion, Conspiracy, Trolling, DeflectingBlame,
+                            MisrepresentationScripture, CherryPickedData)) 
+temp1$LikestoDislikes &lt;- irad$Likes/irad$Dislikes
+temp1$LikestoDislikes[temp1$LikestoDislikes==Inf] &lt;- NA
+temp1$sumallrhetoric &lt;- temp1 %&gt;% select(AdConsequentiam:CherryPickedData) %&gt;% apply(.,1,sum)
+
+iradmainvars &lt;- data.frame(temp1,
+                           temp1 %&gt;% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
+                                              VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %&gt;% 
+                                     mutate_all(~ log(. + .0001)) %&gt;%
+                                     rename_all( ~paste0(., &quot;_log&quot;) ))
+multi.hist(iradmainvars%&gt;%select(contains(&quot;log&quot;)))</code></pre>
+<p><img src="figure/youtube.Rmd/radsummary-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#corrplot...
+RM  &lt;- cor(iradmainvars%&gt;%select(contains(&quot;log&quot;)))
+RM2 &lt;- cor.mtest(iradmainvars%&gt;%select(contains(&quot;log&quot;)), conf.level = .95)
+diag(RM)&lt;-NA
+
+x11(width=11,height=10)
+corrplot.mixed(RM, lower.col = &quot;black&quot;, number.cex = 1.2,insig = &quot;blank&quot;,
+                   upper=&quot;ellipse&quot;,p.mat = RM2$p,sig.level=.05,
+                   tl.pos=&quot;lt&quot;,tl.col=&quot;black&quot;,na.label = &quot;.&quot;,bg=&quot;lightgray&quot;,
+                   tl.cex=1.5,tl.srt=60)</code></pre>
+<p><img src="figure/youtube.Rmd/radsummary-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#dev.print(pdf,paste(figdir,&quot;cormat.pdf&quot;,sep=&quot;/&quot;))</code></pre>
+</div>
+<div id="predict-various-outcomes-for-radical-islamist" class="section level2">
+<h2><span class="header-section-number">0.5</span> Predict various outcomes for Radical Islamist</h2>
+<div id="predict-views-for-radical-islamist" class="section level3">
+<h3><span class="header-section-number">0.5.1</span> Predict views for Radical Islamist</h3>
+<pre class="r"><code>radindepvars &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log: LikestoDislikes_log,sumallrhetoric_log)) %&gt;% select(-Views_log)),collapse=&quot; + &quot;)
+
+allradregFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;,radindepvars))
+viewmod &lt;- lm(allradregFormula, data=iradmainvars, na.action=na.omit)
+allradregs &lt;- ols_step_all_possible(viewmod)
+plot(allradregs)</code></pre>
+<p><img src="figure/youtube.Rmd/regradviews-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradviews-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>topmodels &lt;- allradregs[order(allradregs$n,-allradregs$rsquare) , ]
+topmodels[!duplicated(topmodels$n),]</code></pre>
+<pre><code># A tibble: 5 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 BetweennessCentrali~     0.0773          0.0389        -0.149
+2     6     2 BetweennessCentrali~     0.129           0.0535         0.621
+3    16     3 MisinformationPerMi~     0.132           0.0131         2.57 
+4    26     4 MisinformationPerMi~     0.132          -0.0339         4.57 
+5    31     5 MisinformationPerMi~     0.0521         -0.227          6    </code></pre>
+<pre class="r"><code>#summarize the &#39;best&#39; model 
+radindepvars2 &lt;- paste(unlist(str_split(allradregs[6,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+radbmFormula &lt;- as.formula(paste(&quot;Views_log ~ &quot;, radindepvars2))
+viewbestmod &lt;- lm(radbmFormula, data=iradmainvars)
+summary(viewbestmod)</code></pre>
+<pre><code>
+Call:
+lm(formula = radbmFormula, data = iradmainvars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4350 -1.8649  0.3523  1.2451  3.3789 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)                 3.6720     3.6540   1.005   0.3254  
+BetweennessCentrality_log   0.5439     0.3020   1.801   0.0849 .
+VideoLength_log             0.4417     0.3771   1.171   0.2534  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.954 on 23 degrees of freedom
+Multiple R-squared:  0.1293,    Adjusted R-squared:  0.05354 
+F-statistic: 1.707 on 2 and 23 DF,  p-value: 0.2036</code></pre>
+</div>
+<div id="predict-centrality-for-radical-islamist" class="section level3">
+<h3><span class="header-section-number">0.5.2</span> Predict centrality for Radical Islamist</h3>
+<pre class="r"><code>radindepvars3 &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %&gt;% select(-BetweennessCentrality_log)),collapse=&quot; + &quot;)
+
+allradregFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;,radindepvars3))
+centmod &lt;- lm(allradregFormula2, data=iradmainvars)
+allradregs2 &lt;- ols_step_all_possible(centmod)
+plot(allradregs2)</code></pre>
+<p><img src="figure/youtube.Rmd/regradcent-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradcent-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>topmodels2 &lt;- allradregs2[order(allradregs2$n,-allradregs2$rsquare) , ]
+topmodels2[!duplicated(topmodels2$n),]</code></pre>
+<pre><code># A tibble: 7 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 sumallrhetoric_log        0.250           0.219         11.1 
+2     8     2 LikestoDislikes_log~      0.420           0.361          2.34
+3    29     3 VideoLength_log Lik~      0.454           0.368          3.17
+4    64     4 MisinformationPerMi~      0.500           0.388          3.67
+5    99     5 MisinformationPerMi~      0.510           0.366          5.31
+6   120     6 MisinformationPerMi~      0.547           0.378          6.08
+7   127     7 MisinformationPerMi~      0.550           0.340          8   </code></pre>
+<pre class="r"><code>#summarize the &#39;best&#39; model
+radindepvars4 &lt;- paste(unlist(str_split(allradregs2[8,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+radbmFormula2 &lt;- as.formula(paste(&quot;BetweennessCentrality_log ~ &quot;, radindepvars4))
+centbestmod &lt;- lm(radbmFormula2, data=iradmainvars)
+summary(centbestmod)</code></pre>
+<pre><code>
+Call:
+lm(formula = radbmFormula2, data = iradmainvars)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.02085 -0.85541 -0.07988  0.80556  1.76378 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           6.7524     1.2458   5.420 2.64e-05 ***
+LikestoDislikes_log  -0.2258     0.2166  -1.042  0.30966    
+DislikesPerView_log  -0.7022     0.1912  -3.672  0.00151 ** 
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.069 on 20 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.4195,    Adjusted R-squared:  0.3615 
+F-statistic: 7.227 on 2 and 20 DF,  p-value: 0.004345</code></pre>
+</div>
+<div id="predict-likes-to-dislikes-for-radical-islamist" class="section level3">
+<h3><span class="header-section-number">0.5.3</span> Predict likes to dislikes for Radical Islamist</h3>
+<pre class="r"><code>radindepvars5 &lt;- paste(names(iradmainvars %&gt;% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=&quot; + &quot;)
+
+allradregFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;,radindepvars5))
+radl2dmod &lt;- lm(allradregFormula3, data=iradmainvars)
+allradregs3 &lt;- ols_step_all_possible(radl2dmod)
+plot(allradregs3)</code></pre>
+<p><img src="figure/youtube.Rmd/regradl2d-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/youtube.Rmd/regradl2d-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>topmodels3 &lt;- allradregs3[order(allradregs3$n,-allradregs3$rsquare) , ]
+topmodels3[!duplicated(topmodels3$n),]</code></pre>
+<pre><code># A tibble: 5 x 6
+  Index     N Predictors           `R-Square` `Adj. R-Square` `Mallow&#39;s Cp`
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1     1     1 MisinformationPerMi~      0.417           0.389       -1.85  
+2     6     2 MisinformationPerMi~      0.420           0.362        0.0727
+3    16     3 MisinformationPerMi~      0.422           0.331        2.01  
+4    26     4 MisinformationPerMi~      0.422           0.294        4.00  
+5    31     5 MisinformationPerMi~      0.422           0.253        6     </code></pre>
+<pre class="r"><code>#summarize the &#39;best&#39; model
+radindepvars6 &lt;- paste(unlist(str_split(allradregs3[1,]$predictors,&quot; &quot;)),collapse=&quot; + &quot;)
+radbmFormula3 &lt;- as.formula(paste(&quot;LikestoDislikes_log ~ &quot;, radindepvars6))
+l2dbestmod &lt;- lm(radbmFormula3, data=iradmainvars)
+summary(l2dbestmod)</code></pre>
+<pre><code>
+Call:
+lm(formula = radbmFormula3, data = iradmainvars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.6242 -0.6127  0.1152  0.5855  1.3709 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                   1.0431     0.1956   5.334 2.74e-05 ***
+MisinformationPerMinute_log  -0.8607     0.2220  -3.878  0.00087 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.8226 on 21 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.4172,    Adjusted R-squared:  0.3895 
+F-statistic: 15.04 on 1 and 21 DF,  p-value: 0.0008702</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
