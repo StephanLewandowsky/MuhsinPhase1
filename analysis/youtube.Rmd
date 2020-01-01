@@ -49,6 +49,8 @@ irad <- irad[!rowSums(is.na(irad))==dim(irad)[2], ]
 
 ## Summary statistics for Islamophobia
 ```{r summary, echo=TRUE, warning=FALSE, message=FALSE}
+withModularity <- 1  #determine whether or not modularity should enter as a factor into the regressions
+
 descr(iphob)
 tableplot(iphob)
 
@@ -61,16 +63,15 @@ temp1 <- iphob %>% select(c(Modularity,MisinformationPerMinute,BetweennessCentra
 temp1$LikesPerView[temp1$LikesPerView==0]<-NA
 temp1$LikestoDislikes[temp1$LikestoDislikes==0]<-NA
 temp1$sumallrhetoric <- temp1 %>% select(AdConsequentiam:CherryPickedData) %>% apply(.,1,sum)
-
+temp1 <- data.frame(temp1,temp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
+                                              VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %>% 
+                                              mutate_all(~ log(. + .0001)) %>% rename_all( ~paste0(., "_log") ))
+temp1 <-  rename(temp1,MisinformationPerMinute_log_det = MisinformationPerMinute_log) 
 #now look at detailed endogenous variables
 temp2 <- iphob %>% select(AdConsequentiam:MisrepresentationScripture) %>% rename_all( ~paste0(., "_det") )
 
-iphomainvars <- data.frame(temp1,
-                           temp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
-                                              VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %>% 
-                                     mutate_all(~ log(. + .0001)) %>%
-                                     rename_all( ~paste0(., "_log") ),
-                           temp2)
+iphomainvars <- data.frame(temp1, temp2)
+
 multi.hist(iphomainvars%>%select(contains("log")))
 
 
@@ -106,11 +107,11 @@ corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
 ```{r regphobviews, echo=TRUE, warning=FALSE, message=FALSE}
 
 dv <- "Views_log"
-exovars1 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-dv)),collapse=" + ")
-do1reg(dv, exovars1, iphomainvars)   
+exovars1 <- paste(names(iphomainvars %>% select(c(BetweennessCentrality_log:DislikesPerView_log)) %>% select(-dv)),collapse=" + ")
+do1reg(dv, exovars1, iphomainvars, withModularity)   #last argument indicates whether modularity should be in there
    
 endovars4all <- paste(names(iphomainvars %>% select(contains("det"))),collapse=" + ")
-do1reg(dv, endovars4all, iphomainvars)   
+do1reg(dv, endovars4all, iphomainvars, withModularity)   
 
 ```
 
@@ -118,9 +119,9 @@ do1reg(dv, endovars4all, iphomainvars)
 ```{r regphobcent, echo=TRUE, warning=FALSE, message=FALSE}
 
 dv2 <- "BetweennessCentrality_log"
-exovars2 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-dv2)),collapse=" + ")
-do1reg(dv2, exovars2, iphomainvars)   
-do1reg(dv2, endovars4all, iphomainvars)   
+exovars2 <- paste(names(iphomainvars %>% select(c(BetweennessCentrality_log:DislikesPerView_log)) %>% select(-dv2)),collapse=" + ")
+do1reg(dv2, exovars2, iphomainvars, withModularity)   
+do1reg(dv2, endovars4all, iphomainvars, withModularity)   
 
 ```
 
@@ -129,9 +130,9 @@ do1reg(dv2, endovars4all, iphomainvars)
 
 dv3 <- "LikestoDislikes_log"
 #note that all like variables are removed from list of potential predictors
-exovars3 <- paste(names(iphomainvars %>% select(c(MisinformationPerMinute_log:DislikesPerView_log,sumallrhetoric_log)) %>% select(-contains("ikes"))),collapse=" + ")
-do1reg(dv3, exovars3, iphomainvars)  
-do1reg(dv3, endovars4all, iphomainvars) 
+exovars3 <- paste(names(iphomainvars %>% select(c(BetweennessCentrality_log:DislikesPerView_log)) %>% select(-contains("ikes"))),collapse=" + ")
+do1reg(dv3, exovars3, iphomainvars, withModularity)  
+do1reg(dv3, endovars4all, iphomainvars, withModularity) 
 
 ```
 
@@ -149,18 +150,17 @@ radtemp1 <- irad %>% select(c(Modularity,MisinformationPerMinute,BetweennessCent
 radtemp1$LikestoDislikes <- irad$Likes/irad$Dislikes
 radtemp1$LikestoDislikes[radtemp1$LikestoDislikes==Inf] <- NA
 radtemp1$sumallrhetoric <- radtemp1 %>% select(AdConsequentiam:CherryPickedData) %>% apply(.,1,sum)
+radtemp1 <- data.frame(radtemp1,radtemp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
+                                              VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %>% 
+                                              mutate_all(~ log(. + .0001)) %>% rename_all( ~paste0(., "_log") ))
+radtemp1 <-  rename(radtemp1,MisinformationPerMinute_log_det = MisinformationPerMinute_log) 
 
 #now look at detailed endogenous variables, omitting those with no variance
 radtemp2 <- irad %>% select(AdConsequentiam:MisrepresentationScripture) %>% 
                      rename_all( ~paste0(., "_det") ) %>% 
                      select(which(as.numeric(lapply(.,sd)) != 0))
 
-iradmainvars <- data.frame(radtemp1,
-                           radtemp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
-                                              VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %>% 
-                                     mutate_all(~ log(. + .0001)) %>%
-                                     rename_all( ~paste0(., "_log") ),
-                           radtemp2)
+iradmainvars <- data.frame(radtemp1, radtemp2)
 multi.hist(iradmainvars%>%select(contains("log")))
 
 
@@ -193,11 +193,11 @@ corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
 ```{r regradviews, echo=TRUE, warning=FALSE, message=FALSE}
 
 raddv <- "Views_log"
-radexovars1 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:sumallrhetoric_log)) %>% select(-raddv)),collapse=" + ")
-do1reg(raddv, radexovars1, iradmainvars)   
+radexovars1 <- paste(names(iradmainvars %>% select(c(BetweennessCentrality_log:DislikesPerView_log)) %>% select(-raddv)),collapse=" + ")
+do1reg(raddv, radexovars1, iradmainvars, withModularity)   
    
 radendovars4all <- paste(names(iradmainvars %>% select(contains("det"))),collapse=" + ")
-do1reg(raddv, radendovars4all, iradmainvars)   
+do1reg(raddv, radendovars4all, iradmainvars, withModularity)   
 
 ```
 
@@ -205,9 +205,9 @@ do1reg(raddv, radendovars4all, iradmainvars)
 ```{r regradcent, echo=TRUE, warning=FALSE, message=FALSE}
 
 raddv2 <- "BetweennessCentrality_log"
-radexovars2 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:sumallrhetoric_log)) %>% select(-raddv2)),collapse=" + ")
-do1reg(raddv2, radexovars2, iradmainvars)   
-do1reg(raddv2, radendovars4all, iradmainvars)   
+radexovars2 <- paste(names(iradmainvars %>% select(c(BetweennessCentrality_log:DislikesPerView_log)) %>% select(-raddv2)),collapse=" + ")
+do1reg(raddv2, radexovars2, iradmainvars, withModularity)   
+do1reg(raddv2, radendovars4all, iradmainvars, withModularity)   
 
 ```
 
@@ -216,9 +216,9 @@ do1reg(raddv2, radendovars4all, iradmainvars)
 
 raddv3 <-  "LikestoDislikes_log"
 #note that all like variables are excluded from list of potential predictors
-radexovars3 <- paste(names(iradmainvars %>% select(c(MisinformationPerMinute_log:VideoLength_log,sumallrhetoric_log))),collapse=" + ")
-do1reg(raddv3, radexovars3, iradmainvars)  
-do1reg(raddv3, radendovars4all, iradmainvars)   
+radexovars3 <- paste(names(iradmainvars %>% select(c(BetweennessCentrality_log:VideoLength_log))),collapse=" + ")
+do1reg(raddv3, radexovars3, iradmainvars, withModularity)  
+do1reg(raddv3, radendovars4all, iradmainvars, withModularity)   
 
 ```
 
