@@ -84,6 +84,7 @@ corrplot.mixed(RM, lower.col = "black", number.cex = 1.2,insig = "blank",
 
 
 ```
+## Predict various outcomes for Islamophobia
 
 ### Predict views for Islamophobia
 ```{r regphobviews, echo=TRUE, warning=FALSE, message=FALSE}
