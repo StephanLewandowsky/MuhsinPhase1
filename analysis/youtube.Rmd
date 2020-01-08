@@ -49,7 +49,7 @@ irad <- irad[!rowSums(is.na(irad))==dim(irad)[2], ]
 
 ## Summary statistics for Islamophobia
 ```{r summary, echo=TRUE, warning=FALSE, message=FALSE}
-withModularity <- 1  #determine whether or not modularity should enter as a factor into the regressions
+withModularity <- 0  #determine whether or not modularity should enter as a factor into the regressions
 
 descr(iphob)
 tableplot(iphob)
@@ -68,11 +68,17 @@ temp1 <- data.frame(temp1,temp1 %>% select(c(MisinformationPerMinute, Betweennes
                                               mutate_all(~ log(. + .0001)) %>% rename_all( ~paste0(., "_log") ))
 temp1 <-  rename(temp1,MisinformationPerMinute_log_det = MisinformationPerMinute_log) 
 #now look at detailed endogenous variables
-temp2 <- iphob %>% select(AdConsequentiam:MisrepresentationScripture) %>% rename_all( ~paste0(., "_det") )
+temp2 <- iphob %>% select(AdConsequentiam:CherryPickedData) %>% rename_all( ~paste0(., "_det") ) %>% 
+                         select(-which((lapply(.,sd) %>% unlist)==0))
 
 iphomainvars <- data.frame(temp1, temp2)
 
 multi.hist(iphomainvars%>%select(contains("log")))
+
+#plot violins 
+plotvn <- c("Misinfo/Min", "Centrality",   "Views"    , "VidLength",  "Like2Dislike",   "Likes/View",  "Dislikes/View", "SumRhetoric" )
+x11(width=20,height=10)
+vioplot(iphomainvars %>% select(contains("_log")), col = "brown", las=1,names=plotvn)
 
 
 #corrplot...
@@ -146,21 +152,23 @@ radtemp1 <- irad %>% select(c(Modularity,MisinformationPerMinute,BetweennessCent
                             Views,VideoLength,LikesPerView,DislikesPerView,
                             AdConsequentiam, AdHomien, AdPopulum, FalseCause, 
                             Polarisation, InvokingEmotion, Conspiracy, Trolling, DeflectingBlame,
-                            MisrepresentationScripture, CherryPickedData)) 
+                            MisrepresentationScripture, CherryPickedData, FakeAccounts))
 radtemp1$LikestoDislikes <- irad$Likes/irad$Dislikes
 radtemp1$LikestoDislikes[radtemp1$LikestoDislikes==Inf] <- NA
-radtemp1$sumallrhetoric <- radtemp1 %>% select(AdConsequentiam:CherryPickedData) %>% apply(.,1,sum)
+radtemp1$sumallrhetoric <- radtemp1 %>% select(AdConsequentiam:FakeAccounts) %>% apply(.,1,sum)
 radtemp1 <- data.frame(radtemp1,radtemp1 %>% select(c(MisinformationPerMinute, BetweennessCentrality, Views,
                                               VideoLength, LikestoDislikes ,LikesPerView, DislikesPerView, sumallrhetoric)) %>% 
                                               mutate_all(~ log(. + .0001)) %>% rename_all( ~paste0(., "_log") ))
 radtemp1 <-  rename(radtemp1,MisinformationPerMinute_log_det = MisinformationPerMinute_log) 
 
 #now look at detailed endogenous variables, omitting those with no variance
-radtemp2 <- irad %>% select(AdConsequentiam:MisrepresentationScripture) %>% 
+radtemp2 <- irad %>% select(AdConsequentiam:FakeAccounts) %>% 
                      rename_all( ~paste0(., "_det") ) %>% 
                      select(which(as.numeric(lapply(.,sd)) != 0))
 
-iradmainvars <- data.frame(radtemp1, radtemp2)
+#retain only variables with more than one non-zero entry
+iradmainvars <- data.frame(radtemp1, radtemp2) %>% select(which(as.numeric(lapply(.,FUN=function(x) sum(x != 0, na.rm=TRUE) )) > 1))
+   
 multi.hist(iradmainvars%>%select(contains("log")))
 
 
@@ -226,11 +234,21 @@ do1reg(raddv3, radendovars4all, iradmainvars, withModularity)
 ```{r compr2p, echo=TRUE, warning=FALSE, message=FALSE}
 #plot violins side by side
 plotvn <- c("Misinfo/Min", "Centrality",   "Views"    , "VidLength",  "Like2Dislike",   "Likes/View",  "Dislikes/View", "SumRhetoric" )
-x11(width=20,height=10)
+x11(width=24,height=10)
 vioplot(iphomainvars %>% select(contains("_log")), col = "brown", plotCentre = "line", side = "right",las=1,names=plotvn)
 vioplot(iradmainvars %>% select(contains("_log")), col = "darkgreen", plotCentre = "line", side = "left", add = T)
 title(xlab="Variable",ylab="Measure (log transformed)")
 legend(7,12, fill = c("brown", "darkgreen"), legend = c("Islamophobic", "Islamist"), title = "Type of video")
+
+#and another one for endogenous variables
+plotendovn <- c("log(Misinfo/min)", "AdConsequ", "AdHom", "AdPop", "FalsCaus", "HastyGen",       
+                "Polaris", "Emotion", "Conspir", "Troll", "Deflect", "MisrepScript", "CherryP")
+x11(width=24,height=10)
+vioplot(iphomainvars %>% select(contains("_det")), col = "brown", plotCentre = "line", side = "right",las=1, names=plotendovn)
+vioplot(iradmainvars %>% select(contains("_det")), col = "darkgreen", plotCentre = "line", side = "left", add = T)
+title(xlab="Variable",ylab="Average Count")
+legend(7,-2, fill = c("brown", "darkgreen"), legend = c("Islamophobic", "Islamist"), title = "Type of video")
+
 
 #combined data set in case statistics are wanted
 phorad <- bind_rows(iphob,irad,.id="radorphob")
